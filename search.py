@@ -1,4 +1,4 @@
-#  The program searches for a string in an array and return location index if found.  
+#  The program searches for a string in an array and return location index if found.
 
 class search:    
     def __init__(self):
