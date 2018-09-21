@@ -17,7 +17,6 @@ while True:
     password = getpass('Password: ')
 
     username = changeFormat(username)
-
     index = search.search(username,usernames)
     
     if index != None:
