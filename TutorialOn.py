@@ -1,3 +1,8 @@
+#COE125/C1 - MU-CYCU
+#Gaba, Vince Harley
+#Manuel, Lester
+#He, Zhiyang
+
 from Data.FileHandler import FileHandler
 from Objects.Student import Advisee, PeerAdviser
 
