@@ -1,4 +1,5 @@
 import sqlite3, datetime
+import uuid, hashlib
 
 class FileHandler:
     def __init__(self, database):
@@ -98,8 +99,14 @@ class FileHandler:
 
     #Registers a user account
     def register_user(self, accountid, password):
+        password = self.hash_password(password)
         with self.db:
             self.cs.execute("INSERT INTO Login VALUES(?,?)", (accountid, password))
+
+    #Hash the password, taken from https://www.pythoncentral.io/hashing-strings-with-python/            
+    def hash_password(self, password):
+        salt = uuid.uuid4().hex
+        return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
 
     def close(self):
         self.db.close()
