@@ -1,6 +1,6 @@
 from FileHandler import FileHandler
-
-
+import hashlib
+    
 class Session:
     def __init__(self, database):
         self.fh = FileHandler(database)
@@ -11,16 +11,21 @@ class Session:
         self.adviseecount = 0
         self.peeradvisercount = 0
         
-    #In progress
-#    def login(self, accountid, password):
-#        truepassword, = self.fh.get_password(accountid)
-#        if password == truepassword:
-#            print("Logged In")
-#            return True
-#        else:
-#            print("Failed")
-#            return False
 
+    def login(self, accountid, password):
+        truepassword, = self.fh.get_password(accountid)
+        if self.check_password(truepassword, password):
+            print("Logged In")
+            return True
+        else:
+            print("Failed")
+            return False
+        
+    #Check if password matches the hashed password, taken from https://www.pythoncentral.io/hashing-strings-with-python/  
+    def check_password(self, hashed_password, user_password):
+        password, salt = hashed_password.split(':')
+        return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
+    
 class User:
     def __init__(self, firstname = '', middlename = '', lastname = ''):
         self.firstname = firstname
@@ -57,10 +62,7 @@ class PeerAdviser(Student):
         Student.__init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber)
         self.organization = organization
         
-        
-if __name__ == "__main__":
-   # sesh = Session('datatry.db')
-   # sesh.login(2015103119,'letmein')
+
     
     
     
