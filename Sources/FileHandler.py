@@ -14,6 +14,15 @@ class FileHandler:
         self.cs.execute('CREATE TABLE SessionLog(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text, Subject text, AdviserID integer)')
         self.cs.execute('CREATE TABLE TimeSheet(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text)')
     
+    def clear_database(self):
+        self.cs.execute('DELETE FROM Login')
+        self.cs.execute('DELETE FROM Admin')
+        self.cs.execute('DELETE FROM Advisee')
+        self.cs.execute('DELETE FROM PeerAdviser')
+        self.cs.execute('DELETE FROM SessionLog')
+        self.cs.execute('DELETE FROM TimeSheet')
+        self.cs.execute('VACUUM')
+    
     def add_advisee(self, advisee):
         with self.db:
             self.cs.execute("INSERT INTO Advisee VALUES(?,?,?,?,?,?,?)", (advisee.studentnumber, advisee.firstname, advisee.middlename, advisee.lastname, advisee.program, advisee.contactnumber, advisee.homeaddress))
@@ -26,6 +35,18 @@ class FileHandler:
         with self.db:
             self.cs.execute("INSERT INTO Admin VALUES(?,?,?,?)", (admin.adminid, admin.firstname, admin.middlename, admin.lastname))
 
+    def remove_advisee(self, studentnumber):
+        with self.db:
+            self.cs.execute("DELETE FROM Advisee WHERE StudentNumber=?",(studentnumber,))
+            
+    def remove_peeradviser(self, studentnumber):
+        with self.db:
+            self.cs.execute("DELETE FROM PeerAdviser WHERE StudentNumber=?",(studentnumber,))
+            
+    def remove_admin(self, adminid):
+        with self.db:
+            self.cs.execute("DELETE FROM Admin WHERE AdminID=?",(adminid,))
+
     #Updates advisee details. Can only be accessed by an admin.
     def update_advisee(self, studentnumber, advisee):
         with self.db:
@@ -35,7 +56,14 @@ class FileHandler:
     def update_peeradviser(self, studentnumber, peeradviser):
         with self.db:
             self.cs.execute("UPDATE PeerAdviser SET StudentNumber=?, FirstName=?, MiddleName=?, LastName=?, Program=?, ContactNumber=?, Organization=? WHERE StudentNumber=?", (peeradviser.studentnumber, peeradviser.firstname, peeradviser.middlename, peeradviser.lastname, peeradviser.program, peeradviser.contactnumber, peeradviser.organization, studentnumber))
+            self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(peeradviser.studentnumber, studentnumber))
 
+    #Updates admin details. Can only be accessed by fellow admins.
+    def update_admin(self, adminid, admin):
+        with self.db:
+            self.cs.execute("UPDATE Admin SET AdminID=?, FirstName=?, MiddleName=?, LastName=? WHERE AdminID=?", (admin.adminid, admin.firstname, admin.middlename, admin.lastname, adminid))
+            self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(admin.adminid, adminid))
+    
     #Uses student number to get advisee information.
     def get_advisee(self, studentnumber):
         self.cs.execute("SELECT * FROM Advisee WHERE StudentNumber=?", (studentnumber,))
@@ -45,11 +73,24 @@ class FileHandler:
     def get_peeradviser(self, studentnumber):
         self.cs.execute("SELECT * FROM PeerAdviser WHERE StudentNumber=?", (studentnumber,))
         return self.cs.fetchone()
+    
+    #Uses admin ID to get admin information
+    def get_admin(self, adminid):
+        self.cs.execute("SELECT * FROM Admin WHERE AdminID=?",(adminid,))
+        return self.cs.fetchone()
 
     #Uses the account id to get the passsword
     def get_password(self, accountid):
         self.cs.execute("SELECT Password FROM Login WHERE AccountID=?", (accountid,))
         return self.cs.fetchone()
+    
+    def change_password(self, accountid, password):
+        with self.db:
+            self.cs.execute("UPDATE Login SET Password=? WHERE AccountID=?", (password, accountid))
+    
+    def delete_user(self, accountid):
+        with self.db:
+            self.cs.execute("DELETE FROM Login WHERE AccountID=?", (accountid,))
 
     #Logs the time and date of the start of an advisee's tutorial period
     def advisee_timein(self, studentnumber, subject, adviser):
@@ -103,10 +144,37 @@ class FileHandler:
         with self.db:
             self.cs.execute("INSERT INTO Login VALUES(?,?)", (accountid, password))
 
-    #Hash the password, taken from https://www.pythoncentral.io/hashing-strings-with-python/            
+    #Hash the password. Reference: https://www.pythoncentral.io/hashing-strings-with-python/            
     def hash_password(self, password):
         salt = uuid.uuid4().hex
-        return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
+        return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + 'g' + salt
 
+    #Check if student number is in advisee record
+    def in_advisee(self, studentnumber):
+        self.cs.execute("SELECT count(*) FROM Advisee WHERE StudentNumber=?",(studentnumber,))
+        count, = self.cs.fetchone()    
+        if count != 0:
+            return True
+        else:
+            return False
+
+    #Check if student number is in peer adviser record
+    def in_peeradviser(self, studentnumber):
+        self.cs.execute("SELECT count(*) FROM PeerAdviser WHERE StudentNumber=?",(studentnumber,))
+        count, = self.cs.fetchone()    
+        if count != 0:
+            return True
+        else:
+            return False
+
+    #Check if adminid is in admin record
+    def in_admin(self, adminid):
+        self.cs.execute("SELECT count(*) FROM Admin WHERE AdminID=?",(adminid,))
+        count, = self.cs.fetchone()    
+        if count != 0:
+            return True
+        else:
+            return False
+        
     def close(self):
         self.db.close()
