@@ -10,24 +10,24 @@ class User:
         self.firstname = firstname
         self.middlename = middlename
         self.lastname = lastname
-        
+
     #Returns the full name of the user as a printable representation of the object
     def __str__(self):
         return self.get_fullname()
-    
+
     def __repr__(self):
         return "User({},{},{})".format(self.firstname, self.middlename, self.lastname)
-    
+
     def get_fullname(self):
         return "{}, {} {}".format(self.lastname, self.firstname, self.middlename)
-    
+
 class Student(User):
     def __init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber):
         User.__init__(self, firstname, middlename, lastname)
         self.studentnumber = studentnumber
         self.program = program
         self.contactnumber = contactnumber
-    
+
     def __eq__(self, other):
         try:
             return self.studentnumber == other.studentnumber
@@ -38,23 +38,23 @@ class Advisee(Student):
     def __init__(self,  studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress):
         Student.__init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber)
         self.homeaddress = homeaddress
-    
+
     def time_in(self, subject, adviser):
         if subject == '':
             subject = defaultsubjecttitle
         userfh.advisee_timein(self.studentnumber, subject, adviser)
-        
+
     def time_out(self):
         userfh.advisee_timeout(self.studentnumber)
-    
+
 class PeerAdviser(Student):
     def __init__(self,  studentnumber, firstname, middlename, lastname, program, contactnumber, organization):
         Student.__init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber)
         self.organization = organization
-    
+
     def time_in(self, subject, adviser):
         userfh.peeradviser_timein(self.studentnumber)
-        
+
     def time_out(self):
         userfh.peeradviser_timeout(self.studentnumber)
 
@@ -62,7 +62,7 @@ class Admin(User):
     def __init__(self, adminid, firstname, middlename, lastname):
         User.__init__(self, firstname, middlename, lastname)
         self.adminid = adminid
-        
+
     def __eq__(self, other):
         try:
             return self.adminid == other.adminid
@@ -73,25 +73,25 @@ class Admin(User):
         global usererrormsg
         user = Advisee(*userfh.get_advisee(studentnumber))
         if user in session.advisees:
-            usererrormsg = 'Error: Cannot delete user while in session.'  
+            usererrormsg = 'Error: Cannot delete user while in session.'
             return False
         else:
             userfh.remove_advisee(studentnumber)
             return True
-        
+
     def remove_peeradviser(self, studentnumber, session):
         global usererrormsg
         user = PeerAdviser(*userfh.get_peeradviser(studentnumber))
         if user in session.peeradvisers:
-            usererrormsg = 'Error: Cannot delete user while in session.'  
+            usererrormsg = 'Error: Cannot delete user while in session.'
             return False
         else:
             userfh.remove_advisee(studentnumber)
             return True
-        
+
     def remove_admin(self, adminid):
         userfh.remove_admin(adminid)
-        
+
     def register_admin(self, adminid, firstname, middlename, lastname, password, confirmpassword):
         global usererrormsg
         try:
@@ -168,7 +168,7 @@ class Admin(User):
                 else:
                     errormsg = 'Error: Invalid student number'
                     return False
-                    
+
     def update_peeradviser(self, newstudentnumber, firstname, middlename, lastname, program, contactnumber, organization, password, confirmpassword, currentstudentnumber):
         global usererrormsg
         latestyear = int(datetime.datetime.now().strftime("%Y"))
@@ -198,7 +198,7 @@ class Admin(User):
                 else:
                     usererrormsg = 'Error: Invalid student number'
                     return False
-                
+
     def update_admin(self, newadminid, firstname, middlename, lastname, password, confirmpassword, currentadminid):
         global usererrormsg
         try:
@@ -222,7 +222,7 @@ class Admin(User):
                     userfh.update_admin(currentadminid, newuser)
                     usererrormsg = 'No error'
                     return True
-                
+
     def get_studenttimesheet(self, studentnumber):
         return userfh.get_studenttimesheet(studentnumber)
 
@@ -237,19 +237,17 @@ class Admin(User):
 
     def get_session(self, logid):
         return userfh.get_session(logid)
-        
+
     def get_timelog(self, logid):
         return userfh.get_timelog(logid)
 
-    def update_sessionlog(self, logid, timein, timeout, subjectid, adviserid):
-        userfh.update_sessionlog(logid, timein, timeout, subjectid, adviserid)
-        
+    def update_sessionlog(self, logid, timein, timeout, subject, adviserid):
+        userfh.update_sessionlog(logid, timein, timeout, subject, adviserid)
+
     def update_timesheet(self, logid, timein, timeout):
         userfh.update_timesheet(logid, timein, timeout)
 
 #    def get_peeradviserpoints
 
-
 if __name__ == '__main__':
     pass
-    
