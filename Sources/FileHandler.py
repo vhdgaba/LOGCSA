@@ -16,7 +16,7 @@ class FileHandler:
         self.cs.execute('CREATE TABLE SessionLog(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text, Subject text, AdviserID integer)')
         self.cs.execute('CREATE TABLE TimeSheet(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text)')
         self.cs.execute('CREATE TABLE Subject(SubjectID integer primary key autoincrement, Title text)')
-    
+
     def clear_database(self):
         self.cs.execute('DELETE FROM Login')
         self.cs.execute('DELETE FROM Admin')
@@ -25,11 +25,11 @@ class FileHandler:
         self.cs.execute('DELETE FROM SessionLog')
         self.cs.execute('DELETE FROM TimeSheet')
         self.cs.execute('VACUUM')
-    
+
     def add_subject(self, subject):
         with self.db:
             self.cs.execute("INSERT INTO Subject VALUES(?)", subject)
-    
+
     def add_advisee(self, advisee):
         with self.db:
             self.cs.execute("INSERT INTO Advisee VALUES(?,?,?,?,?,?,?)", (advisee.studentnumber, advisee.firstname, advisee.middlename, advisee.lastname, advisee.program, advisee.contactnumber, advisee.homeaddress))
@@ -45,15 +45,15 @@ class FileHandler:
     def remove_subject(self, subject):
         with self.db:
             self.cs.execute("DELETE FROM Subject WHERE Title=?",(subject,))
-    
+
     def remove_advisee(self, studentnumber):
         with self.db:
             self.cs.execute("DELETE FROM Advisee WHERE StudentNumber=?",(studentnumber,))
-            
+
     def remove_peeradviser(self, studentnumber):
         with self.db:
             self.cs.execute("DELETE FROM PeerAdviser WHERE StudentNumber=?",(studentnumber,))
-            
+
     def remove_admin(self, adminid):
         with self.db:
             self.cs.execute("DELETE FROM Admin WHERE AdminID=?",(adminid,))
@@ -74,7 +74,7 @@ class FileHandler:
         with self.db:
             self.cs.execute("UPDATE Admin SET AdminID=?, FirstName=?, MiddleName=?, LastName=? WHERE AdminID=?", (admin.adminid, admin.firstname, admin.middlename, admin.lastname, adminid))
             self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(admin.adminid, adminid))
-    
+
     #Uses student number to get advisee information.
     def get_advisee(self, studentnumber):
         self.cs.execute("SELECT * FROM Advisee WHERE StudentNumber=?", (studentnumber,))
@@ -84,7 +84,7 @@ class FileHandler:
     def get_peeradviser(self, studentnumber):
         self.cs.execute("SELECT * FROM PeerAdviser WHERE StudentNumber=?", (studentnumber,))
         return self.cs.fetchone()
-    
+
     #Uses admin ID to get admin information
     def get_admin(self, adminid):
         self.cs.execute("SELECT * FROM Admin WHERE AdminID=?",(adminid,))
@@ -94,11 +94,11 @@ class FileHandler:
     def get_password(self, accountid):
         self.cs.execute("SELECT Password FROM Login WHERE AccountID=?", (accountid,))
         return self.cs.fetchone()
-    
+
     def change_password(self, accountid, password):
         with self.db:
             self.cs.execute("UPDATE Login SET Password=? WHERE AccountID=?", (password, accountid))
-    
+
     def delete_user(self, accountid):
         with self.db:
             self.cs.execute("DELETE FROM Login WHERE AccountID=?", (accountid,))
@@ -138,7 +138,7 @@ class FileHandler:
     def get_studenttimesheet(self, studentnumber):
         self.cs.execute("SELECT * FROM TimeSheet WHERE StudentNumber=?", (studentnumber,))
         return self.cs.fetchall()
-   
+
     #Returns the session log of an advisee
     def get_dailysessionlog(self, date):
         self.cs.execute("SELECT * FROM SessionLog WHERE Date=?", (date,))
@@ -149,14 +149,16 @@ class FileHandler:
         self.cs.execute("SELECT * FROM TimeSheet WHERE Date=?", (date,))
         return self.cs.fetchall()
 
-    #Returns a specific session identified by its log ID    
+    #Returns a specific session identified by its log ID
     def get_session(self, logid):
-        self.cs.execute("SELECT * FROM SessionLog WHERE LogID=?", (logid,))
-    
+        self.cs.execute("SELECT TimeIn, TimeOut, Subject, AdviserID FROM SessionLog WHERE LogID=?", (logid,))
+        return self.cs.fetchone()
+
     #Returns a specific time log from the time sheet identified by its log ID
     def get_timelog(self, logid):
-        self.cs.execute("SELECT * FROM SessionLog WHERE LogID=?", (logid,))
-    
+        self.cs.execute("SELECT TimeIn, TimeOut FROM SessionLog WHERE LogID=?", (logid,))
+        return self.cs.fetchone()
+
     #Updates the session log, can only be used by an admin.
     def update_sessionlog(self, logid, timein, timeout, subject, adviserid):
         with self.db:
@@ -173,7 +175,7 @@ class FileHandler:
         with self.db:
             self.cs.execute("INSERT INTO Login VALUES(?,?)", (accountid, password))
 
-    #Hash the password. Reference: https://www.pythoncentral.io/hashing-strings-with-python/            
+    #Hash the password. Reference: https://www.pythoncentral.io/hashing-strings-with-python/
     def hash_password(self, password):
         salt = uuid.uuid4().hex
         return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + 'g' + salt
@@ -181,7 +183,7 @@ class FileHandler:
     #Check if student number is in advisee record
     def in_advisee(self, studentnumber):
         self.cs.execute("SELECT count(*) FROM Advisee WHERE StudentNumber=?",(studentnumber,))
-        count, = self.cs.fetchone()    
+        count, = self.cs.fetchone()
         if count != 0:
             return True
         else:
@@ -190,7 +192,7 @@ class FileHandler:
     #Check if student number is in peer adviser record
     def in_peeradviser(self, studentnumber):
         self.cs.execute("SELECT count(*) FROM PeerAdviser WHERE StudentNumber=?",(studentnumber,))
-        count, = self.cs.fetchone()    
+        count, = self.cs.fetchone()
         if count != 0:
             return True
         else:
@@ -199,16 +201,16 @@ class FileHandler:
     #Check if adminid is in admin record
     def in_admin(self, adminid):
         self.cs.execute("SELECT count(*) FROM Admin WHERE AdminID=?",(adminid,))
-        count, = self.cs.fetchone()    
+        count, = self.cs.fetchone()
         if count != 0:
             return True
         else:
             return False
-        
+
     def terminate_nulls(self):
         with self.db:
             self.cs.execute("UPDATE TimeSheet SET TimeOut=? WHERE TimeOut IS NULL",(placeholder,))
             self.cs.execute("UPDATE SessionLog SET TimeOut=? WHERE TimeOut IS NULL",(placeholder,))
-        
+
     def close(self):
         self.db.close()
