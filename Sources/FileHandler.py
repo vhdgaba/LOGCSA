@@ -76,6 +76,14 @@ class FileHandler:
             self.cs.execute("UPDATE Admin SET AdminID=?, FirstName=?, MiddleName=?, LastName=? WHERE AdminID=?", (admin.adminid, admin.firstname, admin.middlename, admin.lastname, adminid))
             self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(admin.adminid, adminid))
 
+    def get_subjects(self):
+        self.cs.execute("SELECT * FROM Subject")
+        return self.cs.fetchall()
+
+    def get_subject(self, subjectid):
+        self.cs.execute("SELECT Title FROM Subject WHERE SubjectID=?",(subjectid,))
+        return self.cs.fetchone()
+
     #Uses student number to get advisee information.
     def get_advisee(self, studentnumber):
         self.cs.execute("SELECT * FROM Advisee WHERE StudentNumber=?", (studentnumber,))

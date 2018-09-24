@@ -2,7 +2,7 @@ from FileHandler import FileHandler
 from User import Advisee, PeerAdviser, Admin
 import hashlib, datetime
 
-fh = FileHandler('datatry.db')
+fh = FileHandler('record.db')
 
 class Session:
     def __init__(self):
@@ -13,8 +13,17 @@ class Session:
         self.peeradvisercount = 0
         self.errormsg = 'No error'
 
+    def get_subjects(self):
+        return fh.get_subjects()
+    
+    def get_subject(self, subjectid):
+        return fh.get_subject(subjectid)
+
     def login_advisee(self, studentnumber):
-        if fh.in_advisee(studentnumber):
+        if self.peeradvisercount == 0:
+            self.errormsg = 'Error: Advisee cannot log in if there are no peer advisers in session.'
+            return False
+        elif fh.in_advisee(studentnumber):
             user = Advisee(*fh.get_advisee(studentnumber))
             if user in self.advisees:
                 self.errormsg = 'Duplicate Error: The account is already logged in.'
@@ -25,7 +34,7 @@ class Session:
                 self.errormsg = 'No error'
                 return True
         else:
-            self.errormsg = 'The login ID did not match any record.'
+            self.errormsg = 'Error: The login ID did not match any record.'
             return False
 
     def login_peeradviser(self, studentnumber, password):
