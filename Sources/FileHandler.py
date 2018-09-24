@@ -24,6 +24,7 @@ class FileHandler:
         self.cs.execute('DELETE FROM PeerAdviser')
         self.cs.execute('DELETE FROM SessionLog')
         self.cs.execute('DELETE FROM TimeSheet')
+        self.cs.execute('DELETE FROM sqlite_sequence')
         self.cs.execute('VACUUM')
 
     def add_subject(self, subject):
