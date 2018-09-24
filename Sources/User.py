@@ -247,7 +247,8 @@ class Admin(User):
     def update_timesheet(self, logid, timein, timeout):
         userfh.update_timesheet(logid, timein, timeout)
 
-#    def get_peeradviserpoints
+    def get_peeradviserpoints(self, studentnumber):
+        self.get_studenttimesheet(studentnumber)
 
 if __name__ == '__main__':
     pass
