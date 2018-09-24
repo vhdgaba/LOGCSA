@@ -1,6 +1,8 @@
 import sqlite3, datetime
 import uuid, hashlib
 
+placeholder = 'x'
+
 class FileHandler:
     def __init__(self, database):
         self.db = sqlite3.connect(database)
@@ -13,6 +15,7 @@ class FileHandler:
         self.cs.execute('CREATE TABLE PeerAdviser(StudentNumber integer primary key, FirstName text, MiddleName text, LastName text, Program text, ContactNumber text, Organization text)')
         self.cs.execute('CREATE TABLE SessionLog(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text, Subject text, AdviserID integer)')
         self.cs.execute('CREATE TABLE TimeSheet(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text)')
+        self.cs.execute('CREATE TABLE Subject(SubjectID integer primary key autoincrement, Title text)')
     
     def clear_database(self):
         self.cs.execute('DELETE FROM Login')
@@ -22,6 +25,10 @@ class FileHandler:
         self.cs.execute('DELETE FROM SessionLog')
         self.cs.execute('DELETE FROM TimeSheet')
         self.cs.execute('VACUUM')
+    
+    def add_subject(self, subject):
+        with self.db:
+            self.cs.execute("INSERT INTO Subject VALUES(?)", subject)
     
     def add_advisee(self, advisee):
         with self.db:
@@ -35,6 +42,10 @@ class FileHandler:
         with self.db:
             self.cs.execute("INSERT INTO Admin VALUES(?,?,?,?)", (admin.adminid, admin.firstname, admin.middlename, admin.lastname))
 
+    def remove_subject(self, subject):
+        with self.db:
+            self.cs.execute("DELETE FROM Subject WHERE Title=?",(subject,))
+    
     def remove_advisee(self, studentnumber):
         with self.db:
             self.cs.execute("DELETE FROM Advisee WHERE StudentNumber=?",(studentnumber,))
@@ -93,11 +104,11 @@ class FileHandler:
             self.cs.execute("DELETE FROM Login WHERE AccountID=?", (accountid,))
 
     #Logs the time and date of the start of an advisee's tutorial period
-    def advisee_timein(self, studentnumber, subject, adviser):
+    def advisee_timein(self, studentnumber, subject, adviserid):
         date = datetime.datetime.now().strftime("%m-%d-%Y")
         timein = datetime.datetime.now().strftime("%H:%M")
         with self.db:
-            self.cs.execute("INSERT INTO SessionLog(StudentNumber, Subject, Adviser, Date, TimeIn) VALUES(?,?,?,?,?)", (studentnumber, subject, adviser, date, timein))
+            self.cs.execute("INSERT INTO SessionLog(StudentNumber, Subject, AdviserID, Date, TimeIn) VALUES(?,?,?,?,?)", (studentnumber, subject, adviserid, date, timein))
 
     #Logs the time of the end of an advisee's tutorial period
     def advisee_timeout(self, studentnumber):
@@ -119,24 +130,42 @@ class FileHandler:
             self.cs.execute("UPDATE TimeSheet SET TimeOut=? WHERE StudentNumber=? AND TimeOut IS NULL", (timeout, studentnumber))
 
     #Returns the session log of an advisee
-    def get_sessionlog(self, studentnumber):
+    def get_studentsessionlog(self, studentnumber):
         self.cs.execute("SELECT * FROM SessionLog WHERE StudentNumber=?", (studentnumber,))
         return self.cs.fetchall()
 
     #Returns the timesheet record of a peer adviser
-    def get_timesheet(self, studentnumber):
+    def get_studenttimesheet(self, studentnumber):
         self.cs.execute("SELECT * FROM TimeSheet WHERE StudentNumber=?", (studentnumber,))
         return self.cs.fetchall()
+   
+    #Returns the session log of an advisee
+    def get_dailysessionlog(self, date):
+        self.cs.execute("SELECT * FROM SessionLog WHERE Date=?", (date,))
+        return self.cs.fetchall()
 
+    #Returns the timesheet record of a peer adviser
+    def get_dailytimesheet(self, date):
+        self.cs.execute("SELECT * FROM TimeSheet WHERE Date=?", (date,))
+        return self.cs.fetchall()
+
+    #Returns a specific session identified by its log ID    
+    def get_session(self, logid):
+        self.cs.execute("SELECT * FROM SessionLog WHERE LogID=?", (logid,))
+    
+    #Returns a specific time log from the time sheet identified by its log ID
+    def get_timelog(self, logid):
+        self.cs.execute("SELECT * FROM SessionLog WHERE LogID=?", (logid,))
+    
     #Updates the session log, can only be used by an admin.
-    def update_sessionlog(self, studentnumber, timein, timeout, subject, adviserid):
+    def update_sessionlog(self, logid, timein, timeout, subject, adviserid):
         with self.db:
-            self.cs.execute("UPDATE SessionLog SET TimeIn=?, TimeOut=?, Subject=?, AdviserID=? WHERE StudentNumber=?", (timein, timeout, subject, adviserid, studentnumber))
+            self.cs.execute("UPDATE SessionLog SET TimeIn=?, TimeOut=?, Subject=?, AdviserID=? WHERE LogID=?", (timein, timeout, subject, adviserid, logid))
 
     #Updates the timesheet, can only be used by an admin.
-    def update_timesheet(self, studentnumber, timein, timeout):
+    def update_timesheet(self, logid, timein, timeout):
         with self.db:
-            self.cs.execute("UPDATE TimeSheet SET TimeIn=?, TimeOut=? WHERE StudentNumber=?", (timein, timeout, studentnumber))
+            self.cs.execute("UPDATE TimeSheet SET TimeIn=?, TimeOut=? WHERE LogID=?", (timein, timeout, logid))
 
     #Registers a user account
     def register_user(self, accountid, password):
@@ -175,6 +204,11 @@ class FileHandler:
             return True
         else:
             return False
+        
+    def terminate_nulls(self):
+        with self.db:
+            self.cs.execute("UPDATE TimeSheet SET TimeOut=? WHERE TimeOut IS NULL",(placeholder,))
+            self.cs.execute("UPDATE SessionLog SET TimeOut=? WHERE TimeOut IS NULL",(placeholder,))
         
     def close(self):
         self.db.close()
