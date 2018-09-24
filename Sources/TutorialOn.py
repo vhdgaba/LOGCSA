@@ -5,11 +5,57 @@
 
 from Session import Session
 from User import Admin, Advisee, PeerAdviser
+from getpass import getpass
 
 ses = Session()
 
 def menu():
     print('1 - Advisee Login\n2 - Peer Adviser Login\n3 - Admin Login\n4 - Show Online\n')
+
+def select_subject():
+    subjectids = []
+    titles = []
+    print('Available Subjects:')
+    for i, subject in enumerate(ses.get_subjects()):
+        subjectids.append(subject[0])
+        titles.append(subject[1])
+        print('{}\t{}'.format(subjectids[i], titles[i]).expandtabs(5))
+    choice = int(input('Select a subject ID: '))
+    if choice in subjectids:
+        subject, = ses.get_subject(choice)
+        print('Subject chosen: ' + subject + '\n')
+        return subject
+    else:
+        while choice not in subjectids:
+            print("Please select only from the available choices.")
+            choice = int(input('Select a subject ID: '))
+            if choice in subjectids:
+                subject, = ses.get_subject(choice)
+                print('Subject chosen: ' + subject + '\n')
+                return subject
+            
+def select_adviser():
+    adviserids = []
+    names = []
+    print('Available Peer Advisers:')
+    for adviser in ses.peeradvisers:
+        adviserids.append(adviser.studentnumber)
+        names.append(str(adviser))
+        print('  [{}] : {}, {} {}.'.format(adviser.studentnumber, adviser.lastname, adviser.firstname, adviser.middlename[:1]))
+    choice = int(input('Select adviser ID: '))
+    if choice in adviserids:
+        adviser = ses.peeradvisers[adviserids.index(choice)]
+        print('Adviser chosen: ' + str(adviser))
+        return adviser.studentnumber
+    else:
+        while choice not in adviserids: 
+            print("Please select only from the available choices.")
+            choice = int(input('Select adviser ID: '))
+            if choice in adviserids:
+                adviser = ses.peeradvisers[adviserids.index(choice)]
+                print('Subject chosen: ' + str(adviser))
+                return adviser.studentnumber
+            
 
 def show(arg):
     if arg == 'all':
@@ -56,10 +102,18 @@ def login(arg):
     if arg == 'admin':
         pass
     elif arg == 'peeradviser':
-        pass
+        studentnumber = input('Student Number: ')
+        password = getpass('Password: ')
+        if ses.login_peeradviser(studentnumber, password):
+            print('Login success!\n')
+        else:
+            print(ses.errormsg + '\n')
     elif arg == 'advisee':
         studentnumber = input('Student Number: ')
         if ses.login_advisee(studentnumber):
+            subject = select_subject()
+            adviser = select_adviser()
+            #ses.advisees[ses.adviseecount-1].time_in(subject, adviser)
             print('Login success!\n')
         else:
             print(ses.errormsg + '\n')

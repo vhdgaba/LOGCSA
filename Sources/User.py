@@ -2,7 +2,6 @@ from FileHandler import FileHandler
 import datetime
 
 userfh = FileHandler('datatry.db')
-usererrormsg = 'No error'
 defaultsubjecttitle = 'General Information'
 
 class User:
@@ -62,6 +61,7 @@ class Admin(User):
     def __init__(self, adminid, firstname, middlename, lastname):
         User.__init__(self, firstname, middlename, lastname)
         self.adminid = adminid
+        self.errormsg = 'No error'
 
     def __eq__(self, other):
         try:
@@ -70,20 +70,18 @@ class Admin(User):
             return False
 
     def remove_advisee(self, studentnumber, session):
-        global usererrormsg
         user = Advisee(*userfh.get_advisee(studentnumber))
         if user in session.advisees:
-            usererrormsg = 'Error: Cannot delete user while in session.'
+            self.errormsg = 'Error: Cannot delete user while in session.'
             return False
         else:
             userfh.remove_advisee(studentnumber)
             return True
 
     def remove_peeradviser(self, studentnumber, session):
-        global usererrormsg
         user = PeerAdviser(*userfh.get_peeradviser(studentnumber))
         if user in session.peeradvisers:
-            usererrormsg = 'Error: Cannot delete user while in session.'
+            self.errormsg = 'Error: Cannot delete user while in session.'
             return False
         else:
             userfh.remove_advisee(studentnumber)
@@ -93,70 +91,67 @@ class Admin(User):
         userfh.remove_admin(adminid)
 
     def register_admin(self, adminid, firstname, middlename, lastname, password, confirmpassword):
-        global usererrormsg
         try:
             adminid = int(adminid)
         except:
-            usererrormsg = 'Error: Invalid admin ID'
+            self.errormsg = 'Error: Invalid admin ID'
             return False
         else:
             if str(adminid)[:4] != '9999' or len(str(adminid)) != 10:
-                usererrormsg = 'Error: Invalid student number'
+                self.errormsg = 'Error: Invalid student number'
                 return False
             else:
                 if len(password) < 6:
-                    usererrormsg = 'Error: Password must be at least 6 characters'
+                    self.errormsg = 'Error: Password must be at least 6 characters'
                     return False
                 elif password != confirmpassword:
-                    usererrormsg = 'Error: Your password and confirm password do not match'
+                    self.errormsg = 'Error: Your password and confirm password do not match'
                     return False
                 else:
                     newuser = Admin(adminid, firstname, middlename, lastname)
                     userfh.add_admin(newuser)
-                    usererrormsg = 'No error'
+                    self.errormsg = 'No error'
                     return True
 
     def register_peeradviser(self, studentnumber, firstname, middlename, lastname, program, contactnumber, organization, password, confirmpassword):
-        global usererrormsg
         latestyear = int(datetime.datetime.now().strftime("%Y"))
         try:
             studentnumber = int(studentnumber)
         except:
-            usererrormsg = 'Error: Invalid student number'
+            self.errormsg = 'Error: Invalid student number'
             return False
         else:
             if str(studentnumber)[:4] == '9999' or len(str(studentnumber)) != 10:
-                usererrormsg = 'Error: Invalid student number'
+                self.errormsg = 'Error: Invalid student number'
                 return False
             else:
                 year = int(studentnumber/1000000)
                 if year in range(2000, latestyear + 1):
                     if len(password) < 6:
-                        usererrormsg = 'Error: Password must be at least 6 characters'
+                        self.errormsg = 'Error: Password must be at least 6 characters'
                         return False
                     elif password != confirmpassword:
-                        usererrormsg = 'Error: Your password and confirm password do not match'
+                        self.errormsg = 'Error: Your password and confirm password do not match'
                         return False
                     else:
                         newuser = PeerAdviser(studentnumber, firstname, middlename, lastname, program, contactnumber, organization)
                         userfh.add_peeradviser(newuser)
-                        usererrormsg = 'No error'
+                        self.errormsg = 'No error'
                         return True
                 else:
-                    usererrormsg = 'Error: Invalid student number'
+                    self.errormsg = 'Error: Invalid student number'
                     return False
 
     def update_advisee(self, newstudentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, currentstudentnumber):
-        global errormsg
         latestyear = int(datetime.datetime.now().strftime("%Y"))
         try:
             newstudentnumber = int(newstudentnumber)
         except:
-            errormsg = 'Error: Invalid student number'
+            self.errormsg = 'Error: Invalid student number'
             return False
         else:
             if str(newstudentnumber)[:4] == '9999' or len(str(newstudentnumber)) != 10:
-                errormsg = 'Error: Invalid student number'
+                self.errormsg = 'Error: Invalid student number'
                 return False
             else:
                 year = int(newstudentnumber/1000000)
@@ -246,6 +241,12 @@ class Admin(User):
 
     def update_timesheet(self, logid, timein, timeout):
         userfh.update_timesheet(logid, timein, timeout)
+        
+    def add_subject(self, subject):
+        userfh.add_subject(subject)
+    
+    def remove_subject(self, subject):
+        userfh.remove_subject(subject)
 
     def get_peeradviserpoints(self, studentnumber):
         self.get_studenttimesheet(studentnumber)
