@@ -1,6 +1,6 @@
 from FileHandler import FileHandler
 from User import Advisee, PeerAdviser, Admin
-import hashlib
+import hashlib, datetime
 
 fh = FileHandler('datatry.db')
 errormsg = 'No error'
@@ -12,7 +12,7 @@ class Session:
         self.peeradvisers = []
         self.adviseecount = 0
         self.peeradvisercount = 0
-
+        
     def login_advisee(self, studentnumber):
         global errormsg
         if fh.in_advisee(studentnumber):
@@ -82,21 +82,38 @@ class Session:
     def logout_admin(self, admin):
         self.admin = None
     
-#    def register_advisee(self):
-    #add advisee
-  
-#    def register_peer_adviser(self):
-    #add peeradviser, add login
+    def register_advisee(self, studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress):
+        global errormsg
+        latestyear = int(datetime.datetime.now().strftime("%Y"))
+        try:
+            studentnumber = int(studentnumber)
+        except:
+            errormsg = 'Error: Invalid student number'
+            return False
+        else:
+            if str(studentnumber)[:4] == '9999' or len(str(studentnumber)) != 10:
+                errormsg = 'Error: Invalid student number'
+                return False
+            else:
+                year = int(studentnumber/1000000)
+                if year in range(2000, latestyear + 1):
+                    newuser = Advisee(studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress)
+                    fh.add_advisee(newuser)
+                    errormsg = 'No error'
+                    return True
+                else:
+                    errormsg = 'Error: Invalid student number'
+                    return False
+                    
+    def end_session(self):
+        fh.terminate_nulls()
+        fh.close()
     
-#    def end_session(self)
-    #set null timeouts to placeholder value
-    
-
     #Check if password matches the hashed password. Reference: https://www.pythoncentral.io/hashing-strings-with-python/  
     def check_password(self, hashed_password, user_password):
         password, salt = hashed_password.split('g')
         return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
 
 if __name__ == '__main__':
-    pass
-    
+    ses = Session()
+    ses.end_session()
