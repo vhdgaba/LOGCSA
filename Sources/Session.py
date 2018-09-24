@@ -12,7 +12,7 @@ class Session:
         self.peeradvisers = []
         self.adviseecount = 0
         self.peeradvisercount = 0
-        
+
     def login_advisee(self, studentnumber):
         global errormsg
         if fh.in_advisee(studentnumber):
@@ -28,7 +28,7 @@ class Session:
         else:
             errormsg = 'The login ID did not match any record.'
             return False
-        
+
     def login_peeradviser(self, studentnumber, password):
         global errormsg
         if fh.in_peeradviser(studentnumber):
@@ -70,7 +70,7 @@ class Session:
         else:
             errormsg = 'Login Error: The login ID and password entered did not match any record.'
             return False
-    
+
     def logout_advisee(self, advisee):
         self.advisees.remove(advisee)
         self.adviseecount -= 1
@@ -78,10 +78,10 @@ class Session:
     def logout_peeradviser(self, peeradviser):
         self.peeradvisers.remove(peeradviser)
         self.peeradvisercount -= 1
-        
+
     def logout_admin(self, admin):
         self.admin = None
-    
+
     def register_advisee(self, studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress):
         global errormsg
         latestyear = int(datetime.datetime.now().strftime("%Y"))
@@ -104,16 +104,15 @@ class Session:
                 else:
                     errormsg = 'Error: Invalid student number'
                     return False
-                    
+
     def end_session(self):
         fh.terminate_nulls()
         fh.close()
-    
-    #Check if password matches the hashed password. Reference: https://www.pythoncentral.io/hashing-strings-with-python/  
+
+    #Check if password matches the hashed password. Reference: https://www.pythoncentral.io/hashing-strings-with-python/
     def check_password(self, hashed_password, user_password):
         password, salt = hashed_password.split('g')
         return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
 
 if __name__ == '__main__':
-    ses = Session()
-    ses.end_session()
+    pass
