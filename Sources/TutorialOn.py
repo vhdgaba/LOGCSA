@@ -10,7 +10,21 @@ from getpass import getpass
 ses = Session()
 
 def menu():
-    print('1 - Advisee Login\n2 - Peer Adviser Login\n3 - Admin Login\n4 - Show Online\n')
+    print('Commands:\nLOGIN <usertype>\tLog in as ADMIN, ADVISEE, or PEERADVISER\nREGISTER\tSign up an advisee account\nSHOW <studenttype>\tDisplay ALL the users, the ADVISEES, or the PEERADVISERS present in the current session.\nHELP\tSee the list of all available commands.\nEXIT\tTerminate the session and exit the program.\n'.expandtabs(25))
+
+def register():
+    print('Registration: ')
+    studentnumber = input('Student Number [10-digit]: ')
+    firstname = input('First Name: ')
+    middlename = input('Middle Name: ')
+    lastname = input('Last Name: ')
+    program = input('Program: ')
+    contactnumber = input('Contact Number: ')
+    address = input('Address: ')
+    if ses.register_advisee(studentnumber, firstname, middlename, lastname, program, contactnumber, address):
+        print('Registration Success!\n')
+    else:
+        print(ses.errormsg + '\n')
 
 def select_subject():
     subjectids = []
@@ -55,7 +69,6 @@ def select_adviser():
                 adviser = ses.peeradvisers[adviserids.index(choice)]
                 print('Subject chosen: ' + str(adviser))
                 return adviser.studentnumber
-            
 
 def show(arg):
     if arg == 'all':
@@ -125,8 +138,7 @@ def login(arg):
 def start():
     stop = False
     control = 'Session'
-    print('Session started.')
-    menu()
+    print('Session started.\n')
     while not stop:
         
         inp = input('(TutorialOn) {}>>'.format(control)).strip().lower().split(' ')
@@ -155,13 +167,14 @@ def start():
                 print('Invalid argument for <studenttype>\nUse \'SHOW ?\' to see a list of valid arguments.\n')
             
         elif inp[0] == 'register':
-            pass
+            register()
             
         elif inp[0] == 'help' or inp[0] == '?':
             menu()
             
         else:
             print('\'{}\' is not a recognized input.\nUse \'HELP\' to see a complete list of commands.\n'.format(inp[0]))
-            
+    print('Session ended.')
+    
 if __name__ == '__main__':
     start()
