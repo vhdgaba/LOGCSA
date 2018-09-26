@@ -139,6 +139,7 @@ def start():
     stop = False
     control = 'Session'
     print('Session started.\n')
+    menu()
     while not stop:
         
         inp = input('(TutorialOn) {}>>'.format(control)).strip().lower().split(' ')

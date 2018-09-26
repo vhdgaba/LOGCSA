@@ -99,6 +99,9 @@ class Session:
             if str(studentnumber)[:4] == '9999' or len(str(studentnumber)) != 10:
                 self.errormsg = 'Error: Invalid student number'
                 return False
+            elif fh.in_advisee(studentnumber):
+                self.errormsg = 'Error: Student number already registered.'
+                return False
             else:
                 year = int(studentnumber/1000000)
                 if year in range(2000, latestyear + 1):
