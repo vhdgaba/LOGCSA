@@ -4,7 +4,7 @@ from DataAccess.FileHandler import FileHandler
 from BusinessLogic.User import Advisee, PeerAdviser, Admin
 import hashlib, datetime
 
-fh = FileHandler('Data/record.db')
+fh = FileHandler('../Data/record.db')
 
 class Session:
     def __init__(self):
@@ -18,8 +18,8 @@ class Session:
     def get_subjects(self):
         return fh.get_subjects()
 
-    def get_subject(self, subjectid):
-        return fh.get_subject(subjectid)
+    def get_subject(self, code):
+        return fh.get_subject(code)
 
     def login_advisee(self, studentnumber):
         if self.peeradvisercount == 0:

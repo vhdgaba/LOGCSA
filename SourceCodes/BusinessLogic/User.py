@@ -3,7 +3,7 @@ sys.path.append('../')
 from DataAccess.FileHandler import FileHandler
 import datetime
 
-userfh = FileHandler('Data/record.db')
+userfh = FileHandler('../Data/record.db')
 defaultsubjecttitle = 'General Information'
 
 class User:

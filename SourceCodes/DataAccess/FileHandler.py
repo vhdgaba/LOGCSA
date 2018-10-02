@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 import sqlite3, datetime
 import uuid, hashlib
 
@@ -15,7 +17,7 @@ class FileHandler:
         self.cs.execute('CREATE TABLE PeerAdviser(StudentNumber integer primary key, FirstName text, MiddleName text, LastName text, Program text, ContactNumber text, Organization text)')
         self.cs.execute('CREATE TABLE SessionLog(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text, Subject text, AdviserID integer)')
         self.cs.execute('CREATE TABLE TimeSheet(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text)')
-        self.cs.execute('CREATE TABLE Subject(SubjectID integer primary key autoincrement, Title text)')
+        self.cs.execute('CREATE TABLE Subject(Code text primary key, Title text, Field text)')
 
     def clear_database(self):
         self.cs.execute('DELETE FROM Login')
@@ -27,9 +29,9 @@ class FileHandler:
         self.cs.execute('DELETE FROM sqlite_sequence')
         self.cs.execute('VACUUM')
 
-    def add_subject(self, subject):
+    def add_subject(self, code, title, field):
         with self.db:
-            self.cs.execute("INSERT INTO Subject VALUES(?)", subject)
+            self.cs.execute("INSERT INTO Subject VALUES(?,?,?)", code, title, field)
 
     def add_advisee(self, advisee):
         with self.db:
@@ -43,9 +45,9 @@ class FileHandler:
         with self.db:
             self.cs.execute("INSERT INTO Admin VALUES(?,?,?,?)", (admin.adminid, admin.firstname, admin.middlename, admin.lastname))
 
-    def remove_subject(self, subject):
+    def remove_subject(self, code):
         with self.db:
-            self.cs.execute("DELETE FROM Subject WHERE Title=?",(subject,))
+            self.cs.execute("DELETE FROM Subject WHERE Code=?",(code,))
 
     def remove_advisee(self, studentnumber):
         with self.db:
@@ -76,12 +78,12 @@ class FileHandler:
             self.cs.execute("UPDATE Admin SET AdminID=?, FirstName=?, MiddleName=?, LastName=? WHERE AdminID=?", (admin.adminid, admin.firstname, admin.middlename, admin.lastname, adminid))
             self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(admin.adminid, adminid))
 
-    def get_subjects(self):
-        self.cs.execute("SELECT * FROM Subject")
+    def get_subjects(self, field):
+        self.cs.execute("SELECT * FROM Subject WHERE Field=?",(field,))
         return self.cs.fetchall()
 
-    def get_subject(self, subjectid):
-        self.cs.execute("SELECT Title FROM Subject WHERE SubjectID=?",(subjectid,))
+    def get_subject(self, code):
+        self.cs.execute("SELECT Title FROM Subject WHERE Code=?",(code,))
         return self.cs.fetchone()
 
     #Uses student number to get advisee information.

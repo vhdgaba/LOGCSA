@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="lineEdit_program">
     <property name="geometry">
      <rect>
       <x>690</x>
@@ -24,7 +24,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="pushButton_admin">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -37,7 +37,7 @@
      <string>Administrator</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="label_program">
     <property name="geometry">
      <rect>
       <x>640</x>
@@ -50,7 +50,7 @@
      <string>Program:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_3">
+   <widget class="QLineEdit" name="lineEdit_studentnumber">
     <property name="geometry">
      <rect>
       <x>240</x>
@@ -72,7 +72,7 @@
     <property name="title">
      <string/>
     </property>
-    <widget class="QRadioButton" name="radioButton">
+    <widget class="QRadioButton" name="radioButton_1">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -124,7 +124,7 @@
       <string>Professional Course</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="label_coursecode">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -137,7 +137,7 @@
       <string>Course Code:</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_4">
+    <widget class="QLineEdit" name="lineEdit_others">
      <property name="geometry">
       <rect>
        <x>50</x>
@@ -147,7 +147,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="comboBox_coursecode">
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -157,7 +157,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="label_others">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -171,7 +171,7 @@
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="pushButton_dot">
     <property name="geometry">
      <rect>
       <x>630</x>
@@ -184,7 +184,7 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="pushButton_peeradviser">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -197,7 +197,7 @@
      <string>Peer Adviser</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_5">
+   <widget class="QLineEdit" name="lineEdit_peeradviser">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -207,7 +207,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="label_peeradviser">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -220,7 +220,7 @@
      <string>Peer Adviser:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="label_name">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -233,7 +233,7 @@
      <string>Name:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="label_studentnumber">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -246,7 +246,7 @@
      <string>Student Number:</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_5">
+   <widget class="QPushButton" name="pushButton_login">
     <property name="geometry">
      <rect>
       <x>700</x>
@@ -259,7 +259,7 @@
      <string>Login</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="lineEdit_name">
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -282,7 +282,7 @@
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButton_advisee">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -295,7 +295,7 @@
      <string>Advisee</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_6">
+   <widget class="QPushButton" name="pushButton_register">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -308,7 +308,7 @@
      <string>Register</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_7">
+   <widget class="QPushButton" name="pushButton_logout">
     <property name="geometry">
      <rect>
       <x>620</x>
