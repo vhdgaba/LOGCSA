@@ -31,7 +31,7 @@ def select_subject():
     titles = []
     print('Available Subjects:')
     for i, subject in enumerate(ses.get_subjects('Mathematics')):
-        subjectids.append(i + 1)
+        subjectids.append(i)
         titles.append(subject[0])
         print('{}\t{}'.format(subjectids[i], titles[i]).expandtabs(5))
     choice = int(input('Select a subject ID: '))
