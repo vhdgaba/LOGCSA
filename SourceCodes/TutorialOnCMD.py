@@ -30,13 +30,13 @@ def select_subject():
     subjectids = []
     titles = []
     print('Available Subjects:')
-    for i, subject in enumerate(ses.get_subjects()):
-        subjectids.append(subject[0])
-        titles.append(subject[1])
+    for i, subject in enumerate(ses.get_subjects('Mathematics')):
+        subjectids.append(i + 1)
+        titles.append(subject[0])
         print('{}\t{}'.format(subjectids[i], titles[i]).expandtabs(5))
     choice = int(input('Select a subject ID: '))
     if choice in subjectids:
-        subject, = ses.get_subject(choice)
+        subject, = ses.get_subject(titles[choice])
         print('Subject chosen: ' + subject + '\n')
         return subject
     else:
@@ -44,7 +44,7 @@ def select_subject():
             print("Please select only from the available choices.")
             choice = int(input('Select a subject ID: '))
             if choice in subjectids:
-                subject, = ses.get_subject(choice)
+                subject, = ses.get_subject(titles[choice])
                 print('Subject chosen: ' + subject + '\n')
                 return subject
             
