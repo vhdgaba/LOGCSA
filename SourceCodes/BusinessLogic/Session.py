@@ -4,7 +4,7 @@ from DataAccess.FileHandler import FileHandler
 from BusinessLogic.User import Advisee, PeerAdviser, Admin
 import hashlib, datetime
 
-fh = FileHandler('../Data/record.db')
+fh = FileHandler('Data/record.db')
 
 class Session:
     def __init__(self):
@@ -15,8 +15,8 @@ class Session:
         self.peeradvisercount = 0
         self.errormsg = 'No error'
 
-    def get_subjects(self):
-        return fh.get_subjects()
+    def get_subjects(self, field):
+        return fh.get_subjects(field)
 
     def get_subject(self, code):
         return fh.get_subject(code)
@@ -112,7 +112,7 @@ class Session:
     def logout_admin(self, admin):
         self.admin = None
 
-    def register_advisee(self, studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress):
+    def register_advisee(self, studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress):
         latestyear = int(datetime.datetime.now().strftime("%Y"))
         try:
             studentnumber = int(studentnumber)
@@ -126,10 +126,13 @@ class Session:
             elif fh.in_advisee(studentnumber):
                 self.errormsg = 'Error: Student number already registered.'
                 return False
+            elif emailaddress[-20:] != '@mymail.mapua.edu.ph':
+                self.errormsg = 'Error: Invalid email address'
+                return False
             else:
                 year = int(studentnumber/1000000)
                 if year in range(2000, latestyear + 1):
-                    newuser = Advisee(studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress)
+                    newuser = Advisee(studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress)
                     fh.add_advisee(newuser)
                     self.errormsg = 'No error'
                     return True

@@ -13,11 +13,12 @@ class FileHandler:
     def create_database(self):
         self.cs.execute('CREATE TABLE Login(AccountID integer primary key, Password text)')
         self.cs.execute('CREATE TABLE Admin(AdminID integer primary key, FirstName text, MiddleName text, LastName text)')
-        self.cs.execute('CREATE TABLE Advisee(StudentNumber integer primary key, FirstName text, MiddleName text, LastName text, Program text, ContactNumber text, HomeAddress text )')
+        self.cs.execute('CREATE TABLE Advisee(StudentNumber integer primary key, FirstName text, MiddleName text, LastName text, Program text, ContactNumber text, HomeAddress text, EmailAddress text)')
         self.cs.execute('CREATE TABLE PeerAdviser(StudentNumber integer primary key, FirstName text, MiddleName text, LastName text, Program text, ContactNumber text, Organization text)')
         self.cs.execute('CREATE TABLE SessionLog(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text, Subject text, AdviserID integer)')
         self.cs.execute('CREATE TABLE TimeSheet(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text)')
         self.cs.execute('CREATE TABLE Subject(Code text primary key, Title text, Field text)')
+        self.cs.execute('CREATE TABLE AdvisingSchedule(StudentNumber integer primary key, DayOne text, TimeOne text, DayTwo text, TimeTwo, text)')
 
     def clear_database(self):
         self.cs.execute('DELETE FROM Login')
@@ -26,6 +27,7 @@ class FileHandler:
         self.cs.execute('DELETE FROM PeerAdviser')
         self.cs.execute('DELETE FROM SessionLog')
         self.cs.execute('DELETE FROM TimeSheet')
+        self.cs.execute('DELETE FROM AdvisingSchedule')
         self.cs.execute('DELETE FROM sqlite_sequence')
         self.cs.execute('VACUUM')
 
@@ -35,7 +37,7 @@ class FileHandler:
 
     def add_advisee(self, advisee):
         with self.db:
-            self.cs.execute("INSERT INTO Advisee VALUES(?,?,?,?,?,?,?)", (advisee.studentnumber, advisee.firstname, advisee.middlename, advisee.lastname, advisee.program, advisee.contactnumber, advisee.homeaddress))
+            self.cs.execute("INSERT INTO Advisee VALUES(?,?,?,?,?,?,?,?)", (advisee.studentnumber, advisee.firstname, advisee.middlename, advisee.lastname, advisee.program, advisee.contactnumber, advisee.homeaddress, advisee.emailaddress))
 
     def add_peeradviser(self, peeradviser):
         with self.db:
@@ -44,6 +46,10 @@ class FileHandler:
     def add_admin(self, admin):
         with self.db:
             self.cs.execute("INSERT INTO Admin VALUES(?,?,?,?)", (admin.adminid, admin.firstname, admin.middlename, admin.lastname))
+
+    def add_schedule(self, studentnumber, dayone, timeone, daytwo, timetwo):
+        with self.db:
+            self.cs.execute("INSERT INTO AdvisingSchedule VALUES(?,?,?,?,?)",(studentnumber, dayone, timeone, daytwo, timetwo))
 
     def remove_subject(self, code):
         with self.db:
@@ -61,16 +67,21 @@ class FileHandler:
         with self.db:
             self.cs.execute("DELETE FROM Admin WHERE AdminID=?",(adminid,))
 
+    def remove_schedule(self, studentnumber):
+        with self.db:
+            self.cs.execute("DELETE FROM AdvisingSchedule WHERE StudentNumber=?",(studentnumber,))
+
     #Updates advisee details. Can only be accessed by an admin.
     def update_advisee(self, studentnumber, advisee):
         with self.db:
-            self.cs.execute("UPDATE Advisee SET StudentNumber=?, FirstName=?, MiddleName=?, LastName=?, Program=?, ContactNumber=?, HomeAddress=? WHERE StudentNumber=?", (advisee.studentnumber, advisee.firstname, advisee.middlename, advisee.lastname, advisee.program, advisee.contactnumber, advisee.homeaddress, studentnumber))
+            self.cs.execute("UPDATE Advisee SET StudentNumber=?, FirstName=?, MiddleName=?, LastName=?, Program=?, ContactNumber=?, HomeAddress=?, EmailAddress=? WHERE StudentNumber=?", (advisee.studentnumber, advisee.firstname, advisee.middlename, advisee.lastname, advisee.program, advisee.contactnumber, advisee.homeaddress, advisee.emailaddress, studentnumber))
 
     #Updates peer adviser details. Can only be accessed by an admin.
-    def update_peeradviser(self, studentnumber, peeradviser):
+    def update_peeradviser(self, studentnumber, peeradviser, dayone, timeone, daytwo, timetwo):
         with self.db:
             self.cs.execute("UPDATE PeerAdviser SET StudentNumber=?, FirstName=?, MiddleName=?, LastName=?, Program=?, ContactNumber=?, Organization=? WHERE StudentNumber=?", (peeradviser.studentnumber, peeradviser.firstname, peeradviser.middlename, peeradviser.lastname, peeradviser.program, peeradviser.contactnumber, peeradviser.organization, studentnumber))
             self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(peeradviser.studentnumber, studentnumber))
+            self.cs.execute("UPDATE AdvisingSchedule SET StudentNumber=?, DayOne=?, TimeOne=?, DayTwo=?, TimeTwo=? WHERE StudentNumber=?", (peeradviser.studentnumber, dayone, timeone, daytwo, timetwo, studentnumber))
 
     #Updates admin details. Can only be accessed by fellow admins.
     def update_admin(self, adminid, admin):
@@ -79,7 +90,7 @@ class FileHandler:
             self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(admin.adminid, adminid))
 
     def get_subjects(self, field):
-        self.cs.execute("SELECT * FROM Subject WHERE Field=?",(field,))
+        self.cs.execute("SELECT Code FROM Subject WHERE Field=?",(field,))
         return self.cs.fetchall()
 
     def get_subject(self, code):

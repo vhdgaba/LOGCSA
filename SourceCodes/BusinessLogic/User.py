@@ -3,7 +3,7 @@ sys.path.append('../')
 from DataAccess.FileHandler import FileHandler
 import datetime
 
-userfh = FileHandler('../Data/record.db')
+userfh = FileHandler('Data/record.db')
 defaultsubjecttitle = 'General Information'
 
 class User:
@@ -36,9 +36,10 @@ class Student(User):
             return False
 
 class Advisee(Student):
-    def __init__(self,  studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress):
+    def __init__(self,  studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress):
         Student.__init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber)
         self.homeaddress = homeaddress
+        self.emailaddress = emailaddress
 
     def time_in(self, subject, adviser):
         if subject == '':
@@ -144,7 +145,7 @@ class Admin(User):
                     self.errormsg = 'Error: Invalid student number'
                     return False
 
-    def update_advisee(self, newstudentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, currentstudentnumber):
+    def update_advisee(self, newstudentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress, currentstudentnumber):
         latestyear = int(datetime.datetime.now().strftime("%Y"))
         try:
             newstudentnumber = int(newstudentnumber)
@@ -155,10 +156,13 @@ class Admin(User):
             if str(newstudentnumber)[:4] == '9999' or len(str(newstudentnumber)) != 10:
                 self.errormsg = 'Error: Invalid student number'
                 return False
+            elif emailaddress[-20:] != '@mymail.mapua.edu.ph':
+                self.errormsg = 'Error: Invalid email address'
+                return False
             else:
                 year = int(newstudentnumber/1000000)
                 if year in range(2000, latestyear + 1):
-                    updateduser = Advisee(newstudentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress)
+                    updateduser = Advisee(newstudentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress)
                     userfh.update_advisee(currentstudentnumber, updateduser)
                     self.errormsg = 'No error'
                     return True
