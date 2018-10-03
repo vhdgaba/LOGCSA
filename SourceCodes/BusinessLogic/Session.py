@@ -4,7 +4,7 @@ from DataAccess.FileHandler import FileHandler
 from BusinessLogic.User import Advisee, PeerAdviser, Admin
 import hashlib, datetime
 
-fh = FileHandler('Data/record.db')
+fh = FileHandler('../Data/record.db')
 
 class Session:
     def __init__(self):
