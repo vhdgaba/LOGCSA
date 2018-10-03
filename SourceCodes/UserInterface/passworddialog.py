@@ -12,14 +12,18 @@ class Ui_Password(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(387, 146)
-        self.pushButton_login = QtWidgets.QPushButton(Dialog)
-        self.pushButton_login.setGeometry(QtCore.QRect(160, 90, 75, 23))
-        self.pushButton_login.setObjectName("pushButton_login")
-        self.pushButton_login.clicked.connect(lambda: self.push_login(Dialog))
+        
         self.lineEdit_password = QtWidgets.QLineEdit(Dialog)
         self.lineEdit_password.setGeometry(QtCore.QRect(100, 50, 201, 20))
         self.lineEdit_password.setObjectName("lineEdit_password")
         self.lineEdit_password.setEchoMode(QtWidgets.QLineEdit.Password)
+        
+        self.pushButton_login = QtWidgets.QPushButton(Dialog)
+        self.pushButton_login.setGeometry(QtCore.QRect(160, 90, 75, 23))
+        self.pushButton_login.setObjectName("pushButton_login")
+        self.pushButton_login.setAutoDefault(True)
+        self.pushButton_login.clicked.connect(lambda: self.push_login(Dialog))
+        
         self.label_password = QtWidgets.QLabel(Dialog)
         self.label_password.setGeometry(QtCore.QRect(40, 50, 61, 16))
         self.label_password.setObjectName("label_password")

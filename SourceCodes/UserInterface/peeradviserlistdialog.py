@@ -18,10 +18,12 @@ class Ui_PeerDialog(object):
         self.pushButton_select = QtWidgets.QPushButton(Dialog)
         self.pushButton_select.setGeometry(QtCore.QRect(210, 250, 75, 23))
         self.pushButton_select.setObjectName("pushButton_select")
+        self.pushButton_select.setAutoDefault(True)
         self.pushButton_select.clicked.connect(lambda: self.push_select(Dialog))
         self.pushButton_cancel = QtWidgets.QPushButton(Dialog)
         self.pushButton_cancel.setGeometry(QtCore.QRect(300, 250, 75, 23))
         self.pushButton_cancel.setObjectName("pushButton_cancel")
+        self.pushButton_cancel.setAutoDefault(True)
         self.pushButton_cancel.clicked.connect(lambda: self.push_cancel(Dialog))
 
         self.retranslateUi(Dialog)
