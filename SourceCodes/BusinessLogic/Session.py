@@ -1,7 +1,7 @@
-import sys
-sys.path.append('../')
 from DataAccess.FileHandler import FileHandler
-from BusinessLogic.User import Advisee, PeerAdviser, Admin
+from BusinessLogic.Advisee import Advisee
+from BusinessLogic.PeerAdviser import PeerAdviser
+from BusinessLogic.Admin import Admin
 import hashlib, datetime
 
 fh = FileHandler('../Data/record.db')
