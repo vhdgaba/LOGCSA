@@ -6,9 +6,6 @@ Created on Wed Oct  3 16:06:49 2018
 """
 from UserInterface.peeradviserlogin import Ui_PeerAdviser 
 
-
-import sys
-sys.path.append('../')
 from BusinessLogic.Session import Session
 from PyQt5 import QtCore, QtGui, QtWidgets
 

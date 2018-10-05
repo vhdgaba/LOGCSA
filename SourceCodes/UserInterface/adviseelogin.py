@@ -9,9 +9,10 @@
 import sys
 sys.path.append('../')
 from BusinessLogic.Session import Session
-from BusinessLogic.User import User, Advisee
+from BusinessLogic.Advisee import Advisee
 from PyQt5 import QtCore, QtGui, QtWidgets
 from UserInterface.peeradviserlistdialog import Ui_PeerDialog
+from UserInterface.adviseelistdialog import Ui_AdviseeDialog
 from UserInterface import peeradviserlogin, adminlogin, adviseeregistration
 
 ses = Session()
@@ -77,6 +78,7 @@ class Ui_Advisee(object):
         self.pushButton_logout = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_logout.setGeometry(QtCore.QRect(620, 350, 75, 23))
         self.pushButton_logout.setObjectName("pushButton_logout")
+        self.pushButton_logout.clicked.connect(lambda: self.push_logout())
         self.pushButton_logout.setAutoDefault(True)
         self.pushButton_advisee = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_advisee.setGeometry(QtCore.QRect(20, 90, 91, 23))
@@ -263,20 +265,37 @@ class Ui_Advisee(object):
                     self.lineEdit_peeradviser.clear()
                     self.lineEdit_program.clear()
                     self.lineEdit_studentnumber.clear()
+                    self.radioButton_chemistry.setAutoExclusive(False)
                     self.radioButton_chemistry.setChecked(False)
+                    self.radioButton_mathematics.setAutoExclusive(False)
                     self.radioButton_mathematics.setChecked(False)
+                    self.radioButton_physics.setAutoExclusive(False)
                     self.radioButton_physics.setChecked(False)
+                    self.radioButton_professional.setAutoExclusive(False)
                     self.radioButton_professional.setChecked(False)
+                    
+                    self.radioButton_chemistry.setAutoExclusive(True)
+                    self.radioButton_mathematics.setAutoExclusive(True)
+                    self.radioButton_physics.setAutoExclusive(True)
+                    self.radioButton_professional.setAutoExclusive(True)
+                else:
+                    self.smsg(self.ses.errormsg)
         else:
             self.smsg('Please fill-up all fields!')
             
-    def push_register(self):
-        self.registrationform = QtWidgets.QWidget()
-        ui = adviseeregistration.Ui_AdviseeRegister()
-        ui.setupUi(self.registrationform)
+    def push_logout(self):
+        AdviseeDialog = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+        ui = Ui_AdviseeDialog()
+        ui.setupUi(AdviseeDialog)
         ui.connect_session(self.ses)
-        self.registrationform.show()
-        
+        AdviseeDialog.exec_()
+            
+    def push_register(self):
+        registrationform = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+        ui = adviseeregistration.Ui_AdviseeRegister()
+        ui.setupUi(registrationform)
+        ui.connect_session(self.ses)
+        registrationform.exec_()
             
     def smsg(self, message):
         msg = QtWidgets.QMessageBox()

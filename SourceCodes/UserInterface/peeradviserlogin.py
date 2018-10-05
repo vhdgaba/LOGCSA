@@ -1,15 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'default.ui'
-#
-# Created by: PyQt5 UI code generator 5.6
-#
-# WARNING! All changes made in this file will be lost!
-
-import sys
-sys.path.append('../')
 from BusinessLogic.Session import Session
-from BusinessLogic.User import User, PeerAdviser
+from BusinessLogic.PeerAdviser import PeerAdviser
 from PyQt5 import QtCore, QtGui, QtWidgets
 from UserInterface.passworddialog import Ui_Password
 from UserInterface import adviseelogin, adminlogin, peeradviserregistration
