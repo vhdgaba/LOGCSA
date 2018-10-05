@@ -6,6 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+from BusinessLogic.Advisee import Advisee
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_AdviseeDialog(object):
@@ -45,13 +46,15 @@ class Ui_AdviseeDialog(object):
     def push_logout(self, Dialog):
         user_sn = self.listWidget.currentItem().text().split(' ')[0]
         if self.ses.logout_advisee(user_sn):
+            Advisee(*self.ses.get_advisee(user_sn)).time_out()
             self.smsg('Logout success!')
             self.updatelist()
+            Dialog.close()
         else:
             self.smsg(self.ses.errormsg)
-        Dialog.close()
         
     def push_cancel(self, Dialog):
+        self.loggedout = False
         Dialog.close()     
         
     def smsg(self, message):

@@ -153,6 +153,7 @@ class Ui_PeerAdviser(object):
             studnum = self.lineEdit_studentnumber.text()
             password = ui.lineEdit_password.text()
             if self.ses.login_peeradviser(studnum, password):
+                PeerAdviser(*self.ses.get_peeradviser(studnum)).time_in()
                 self.smsg('Login success!')
                 self.updatelist()
                 self.lineEdit_name.clear()
@@ -165,6 +166,7 @@ class Ui_PeerAdviser(object):
     def push_logout(self):
         user_sn = self.listWidget.currentItem().text().split(' ')[0]
         if self.ses.logout_peeradviser(user_sn):
+            PeerAdviser(*self.ses.get_peeradviser(user_sn)).time_out()
             self.smsg('Logout success!')
             self.updatelist()
         else:

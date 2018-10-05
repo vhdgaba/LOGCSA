@@ -258,6 +258,7 @@ class Ui_Advisee(object):
                 self.smsg('Please fill-up all fields!')
             else:
                 if self.ses.login_advisee(self.lineEdit_studentnumber.text()):
+                    Advisee(*(self.ses.get_advisee(self.lineEdit_studentnumber.text()))).time_in(self.comboBox_coursecode.currentText(), self.lineEdit_peeradviser.text().split(' ')[0])
                     self.smsg('Login Success!')
                     self.comboBox_coursecode.clear()
                     self.lineEdit_name.clear()
