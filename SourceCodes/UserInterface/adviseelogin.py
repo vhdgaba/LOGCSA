@@ -138,6 +138,10 @@ class Ui_Advisee(object):
         self.lineEdit_peeradviser.setObjectName("lineEdit_peeradviser")
         self.lineEdit_peeradviser.setReadOnly(True)
         
+        self.pushButton_admin.setAutoExclusive(True)
+        self.pushButton_advisee.setAutoExclusive(True)
+        self.pushButton_peeradviser.setAutoExclusive(True)
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
