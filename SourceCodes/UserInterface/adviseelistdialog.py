@@ -7,12 +7,18 @@
 # WARNING! All changes made in this file will be lost!
 
 from BusinessLogic.Advisee import Advisee
+from UserInterface.evaluation import Ui_Evaluation
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_AdviseeDialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(400, 300)
+    
+        icon = QtGui.QIcon("../Resources/logo.png")
+        Dialog.setWindowIcon(icon)
+        Dialog.setWindowTitle("TutorialOn")
+        
         self.listWidget = QtWidgets.QListWidget(Dialog)
         self.listWidget.setGeometry(QtCore.QRect(30, 30, 341, 211))
         self.listWidget.setObjectName("listWidget")
@@ -30,7 +36,7 @@ class Ui_AdviseeDialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "TutorialOn"))
         self.pushButton_logout.setText(_translate("Dialog", "Logout"))
         self.pushButton_cancel.setText(_translate("Dialog", "Cancel"))
 
@@ -46,6 +52,11 @@ class Ui_AdviseeDialog(object):
     def push_logout(self, Dialog):
         user_sn = self.listWidget.currentItem().text().split(' ')[0]
         if self.ses.logout_advisee(user_sn):
+            Evaluation = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+            ui = Ui_Evaluation()
+            ui.setupUi(Evaluation)
+            ui.connect_session(self.ses)
+            Evaluation.exec_()
             evaluation = 25
             Advisee(*self.ses.get_advisee(user_sn)).time_out(evaluation)
             self.smsg('Logout success!')
@@ -61,8 +72,8 @@ class Ui_AdviseeDialog(object):
     def smsg(self, message):
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle('TutorialOn')
-        #icon = QtGui.QIcon("TutorialOn.png")
-        #msg.setWindowIcon(icon)
+        icon = QtGui.QIcon("../Resources/logo.png")
+        msg.setWindowIcon(icon)
         msg.setText(message)
         msg.exec_()
         

@@ -116,26 +116,33 @@ class Session:
         except:
             self.errormsg = 'Error: Invalid student number'
             return False
-        else:
-            if str(studentnumber)[:4] == '9999' or len(str(studentnumber)) != 10:
-                self.errormsg = 'Error: Invalid student number'
-                return False
-            elif fh.in_advisee(studentnumber):
-                self.errormsg = 'Error: Student number already registered.'
-                return False
-            elif emailaddress[-20:] != '@mymail.mapua.edu.ph':
-                self.errormsg = 'Error: Invalid email address'
-                return False
+        else:   
+            try:
+                int(contactnumber)
+                if len(contactnumber) != 11:
+                    raise
+            except:
+                self.errormsg = 'Error: Invalid contact number'
             else:
-                year = int(studentnumber/1000000)
-                if year in range(2000, latestyear + 1):
-                    newuser = Advisee(studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress)
-                    fh.add_advisee(newuser)
-                    self.errormsg = 'No error'
-                    return True
-                else:
+                if str(studentnumber)[:4] == '9999' or len(str(studentnumber)) != 10:
                     self.errormsg = 'Error: Invalid student number'
                     return False
+                elif fh.in_advisee(studentnumber):
+                    self.errormsg = 'Error: Student number already registered.'
+                    return False
+                elif emailaddress[-20:] != '@mymail.mapua.edu.ph':
+                    self.errormsg = 'Error: Invalid email address'
+                    return False
+                else:
+                    year = int(studentnumber/1000000)
+                    if year in range(2000, latestyear + 1):
+                        newuser = Advisee(studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress)
+                        fh.add_advisee(newuser)
+                        self.errormsg = 'No error'
+                        return True
+                    else:
+                        self.errormsg = 'Error: Invalid student number'
+                        return False
 
     def get_advisee(self, studentnumber):
         if fh.in_advisee(studentnumber):

@@ -2,7 +2,9 @@ from DataAccess.FileHandler import FileHandler
 from BusinessLogic.User import User
 from BusinessLogic.Advisee import Advisee
 from BusinessLogic.PeerAdviser import PeerAdviser
-import datetime
+import datetime, smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 userfh = FileHandler('../Data/record.db')
 
@@ -39,30 +41,24 @@ class Admin(User):
     def remove_admin(self, adminid):
         userfh.remove_admin(adminid)
 
-    def register_admin(self, adminid, firstname, middlename, lastname, password, confirmpassword):
-        try:
-            adminid = int(adminid)
-        except:
-            self.errormsg = 'Error: Invalid admin ID'
+    def register_admin(self, adminid, firstname, middlename, lastname, password, confirmpassword, email):
+        if userfh.in_admin(adminid):
+            self.errormsg = 'Error: Username already taken'
+            return False
+        elif len(password) < 6:
+            self.errormsg = 'Error: Password must be at least 6 characters'
+            return False
+        elif password != confirmpassword:
+            self.errormsg = 'Error: Your password and confirm password do not match'
             return False
         else:
-            if str(adminid)[:4] != '9999' or len(str(adminid)) != 10:
-                self.errormsg = 'Error: Invalid student number'
-                return False
-            else:
-                if len(password) < 6:
-                    self.errormsg = 'Error: Password must be at least 6 characters'
-                    return False
-                elif password != confirmpassword:
-                    self.errormsg = 'Error: Your password and confirm password do not match'
-                    return False
-                else:
-                    newuser = Admin(adminid, firstname, middlename, lastname)
-                    userfh.add_admin(newuser)
-                    self.errormsg = 'No error'
-                    return True
+            newuser = Admin(adminid, firstname, middlename, lastname, email)
+            userfh.add_admin(newuser)
+            userfh.register_user(adminid, password)
+            self.errormsg = 'No error'
+            return True
 
-    def register_peeradviser(self, studentnumber, firstname, middlename, lastname, program, contactnumber, organization, password, confirmpassword):
+    def register_peeradviser(self, studentnumber, firstname, middlename, lastname, program, contactnumber, organization, emailaddress, password, dayone, timeone, daytwo, timetwo):
         latestyear = int(datetime.datetime.now().strftime("%Y"))
         try:
             studentnumber = int(studentnumber)
@@ -70,105 +66,90 @@ class Admin(User):
             self.errormsg = 'Error: Invalid student number'
             return False
         else:
-            if str(studentnumber)[:4] == '9999' or len(str(studentnumber)) != 10:
-                self.errormsg = 'Error: Invalid student number'
-                return False
+            try:
+                int(contactnumber)
+                if len(contactnumber) != 11:
+                    raise
+            except:
+                self.errormsg = 'Error: Invalid contact number'
             else:
-                year = int(studentnumber/1000000)
-                if year in range(2000, latestyear + 1):
-                    if len(password) < 6:
-                        self.errormsg = 'Error: Password must be at least 6 characters'
-                        return False
-                    elif password != confirmpassword:
-                        self.errormsg = 'Error: Your password and confirm password do not match'
-                        return False
+                if str(studentnumber)[:4] == '9999' or len(str(studentnumber)) != 10:
+                    self.errormsg = 'Error: Invalid student number'
+                    return False
+                elif userfh.in_peeradviser(studentnumber):
+                    self.errormsg = 'Error: Student Number already taken'
+                else:
+                    year = int(studentnumber/1000000)
+                    if year in range(2000, latestyear + 1):
+                        if len(password) < 6:
+                            self.errormsg = 'Error: Password must be at least 6 characters'
+                            return False
+                        elif emailaddress[-20:] != '@mymail.mapua.edu.ph':
+                            self.errormsg = 'Error: Invalid email address'
+                            return False
+                        elif dayone == daytwo and timeone == timetwo:
+                            self.errormsg = 'Error: Advising schedules must be distinct'
+                            return False
+                        else:
+                            newuser = PeerAdviser(studentnumber, firstname, middlename, lastname, program, contactnumber, organization, emailaddress)
+                            userfh.register_user(studentnumber, password)
+                            userfh.add_peeradviser(newuser)
+                            userfh.add_schedule(studentnumber, dayone, timeone, daytwo, timetwo)
+                            self.errormsg = 'No error'
+                            return True
                     else:
-                        newuser = PeerAdviser(studentnumber, firstname, middlename, lastname, program, contactnumber, organization)
-                        userfh.add_peeradviser(newuser)
-                        self.errormsg = 'No error'
-                        return True
-                else:
-                    self.errormsg = 'Error: Invalid student number'
-                    return False
-
-    def update_advisee(self, newstudentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress, currentstudentnumber):
-        latestyear = int(datetime.datetime.now().strftime("%Y"))
-        try:
-            newstudentnumber = int(newstudentnumber)
-        except:
-            self.errormsg = 'Error: Invalid student number'
-            return False
-        else:
-            if str(newstudentnumber)[:4] == '9999' or len(str(newstudentnumber)) != 10:
-                self.errormsg = 'Error: Invalid student number'
-                return False
-            elif emailaddress[-20:] != '@mymail.mapua.edu.ph':
-                self.errormsg = 'Error: Invalid email address'
-                return False
-            else:
-                year = int(newstudentnumber/1000000)
-                if year in range(2000, latestyear + 1):
-                    updateduser = Advisee(newstudentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress)
-                    userfh.update_advisee(currentstudentnumber, updateduser)
-                    self.errormsg = 'No error'
-                    return True
-                else:
-                    self.errormsg = 'Error: Invalid student number'
-                    return False
-
-    def update_peeradviser(self, newstudentnumber, firstname, middlename, lastname, program, contactnumber, organization, password, confirmpassword, currentstudentnumber):
-        latestyear = int(datetime.datetime.now().strftime("%Y"))
-        try:
-            newstudentnumber = int(newstudentnumber)
-        except:
-            self.errormsg = 'Error: Invalid student number'
-            return False
-        else:
-            if str(newstudentnumber)[:4] == '9999' or len(str(newstudentnumber)) != 10:
-                self.errormsg = 'Error: Invalid student number'
-                return False
-            else:
-                year = int(newstudentnumber/1000000)
-                if year in range(2000, latestyear + 1):
-                    if len(password) < 6:
-                        self.errormsg = 'Error: Password must be at least 6 characters'
+                        self.errormsg = 'Error: Invalid student number'
                         return False
-                    elif password != confirmpassword:
-                        self.errormsg = 'Error: Your password and confirm password do not match'
-                        return False
-                    else:
-                        newuser = PeerAdviser(newstudentnumber, firstname, middlename, lastname, program, contactnumber, organization)
-                        userfh.update_peeradviser(currentstudentnumber, newuser)
-                        self.errormsg = 'No error'
-                        return True
-                else:
-                    self.errormsg = 'Error: Invalid student number'
-                    return False
 
-    def update_admin(self, newadminid, firstname, middlename, lastname, password, confirmpassword, currentadminid):
-        global usererrormsg
-        try:
-            newadminid = int(newadminid)
-        except:
-            self.errormsg = 'Error: Invalid admin ID'
-            return False
-        else:
-            if str(newadminid)[:4] != '9999' or len(str(newadminid)) != 10:
-                self.errormsg = 'Error: Invalid student number'
-                return False
-            else:
-                if len(password) < 6:
-                    self.errormsg = 'Error: Password must be at least 6 characters'
-                    return False
-                elif password != confirmpassword:
-                    self.errormsg = 'Error: Your password and confirm password do not match'
-                    return False
-                else:
-                    newuser = Admin(newadminid, firstname, middlename, lastname)
-                    userfh.update_admin(currentadminid, newuser)
-                    self.errormsg = 'No error'
-                    return True
-
+    def email_adviser(self, password, subject_text, content_text):
+        failed = 0
+        for email, in userfh.get_emailadviser():
+            print(email)
+            msg = MIMEMultipart()
+            msg['From'] = self.emailaddress
+            msg['To'] = email
+            msg['Subject'] = subject_text
+            
+            content = content_text
+            msg.attach(MIMEText(content, 'plain'))
+            
+            content = msg.as_string()
+            server = smtplib.SMTP('smtp-mail.outlook.com:587')
+            
+            try:
+                server.starttls()
+                server.login(self.emailaddress, password)
+                
+                server.sendmail(self.emailaddress, email, content)
+                server.quit()
+            except:
+                failed += 1
+        return failed
+    
+    def email_advisee(self, password, subject_text, content_text):
+        failed = 0
+        for email, in userfh.get_emailadvisee():
+            msg = MIMEMultipart()
+            msg['From'] = self.emailaddress
+            msg['To'] = email
+            msg['Subject'] = subject_text
+            
+            content = content_text
+            msg.attach(MIMEText(content, 'plain'))
+            
+            content = msg.as_string()
+            server = smtplib.SMTP('smtp-mail.outlook.com:587')
+            
+            try:
+                server.starttls()
+                server.login(self.emailaddress, password)
+                
+                server.sendmail(self.emailaddress, email, content)
+                server.quit()
+            except:
+                failed += 1
+        return failed
+            
     def get_studenttimesheet(self, studentnumber):
         return userfh.get_studenttimesheet(studentnumber)
 
@@ -202,5 +183,8 @@ class Admin(User):
     def get_peeradviserpoints(self, studentnumber):
         self.get_studenttimesheet(studentnumber)
 
+    def clear_database(self):
+        userfh.clear_database()
+    
 if __name__ == '__main__':
     pass

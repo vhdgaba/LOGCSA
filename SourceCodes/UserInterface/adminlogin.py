@@ -11,6 +11,10 @@ class Ui_Admin(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
+        icon = QtGui.QIcon("../Resources/logo.png")
+        MainWindow.setWindowIcon(icon)
+        MainWindow.setWindowTitle("TutorialOn")
+        
         self.lineEdit_username = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_username.setGeometry(QtCore.QRect(200, 100, 211, 20))
         self.lineEdit_username.setObjectName("lineEdit_username")
@@ -65,7 +69,7 @@ class Ui_Admin(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "TutorialOn"))
         self.pushButton_advisee.setText(_translate("MainWindow", "Advisee"))
         self.pushButton_peeradviser.setText(_translate("MainWindow", "Peer Adviser"))
         self.pushButton_administrator.setText(_translate("MainWindow", "Administrator"))
@@ -104,8 +108,8 @@ class Ui_Admin(object):
     def smsg(self, message):
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle('TutorialOn')
-        #icon = QtGui.QIcon("TutorialOn.png")
-        #msg.setWindowIcon(icon)
+        icon = QtGui.QIcon("../Resources/logo.png")
+        msg.setWindowIcon(icon)
         msg.setText(message)
         msg.exec_()
         

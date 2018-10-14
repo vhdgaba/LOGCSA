@@ -13,6 +13,10 @@ class Ui_AdviseeRegister(object):
         Form.setObjectName("Form")
         Form.resize(550, 390)
         
+        icon = QtGui.QIcon("../Resources/logo.png")
+        Form.setWindowIcon(icon)
+        Form.setWindowTitle("TutorialOn")
+        
         self.lineEdit_lastname = QtWidgets.QLineEdit(Form)
         self.lineEdit_lastname.setGeometry(QtCore.QRect(10, 80, 171, 20))
         self.lineEdit_lastname.setStatusTip("")
@@ -98,7 +102,7 @@ class Ui_AdviseeRegister(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "TutorialOn"))
         self.label_name.setText(_translate("Form", "Name:"))
         self.lineEdit_lastname.setPlaceholderText(_translate("Form", "Last Name"))
         self.label_program.setText(_translate("Form", "Program:"))
@@ -122,16 +126,18 @@ class Ui_AdviseeRegister(object):
         self.ses = session
 
     def push_register(self, form):
-        if self.lineEdit_address_1.text() == '' or self.lineEdit_address_2.text() == '' or self.lineEdit_address_3.text() == '' or self.lineEdit_address_4.text() == '' or self.lineEdit_address_5.text() == '' or self.lineEdit_address_6.text() == '' or self.lineEdit_contactnumber.text() == '' or self.lineEdit_emailaddress.text() == '' or self.lineEdit_givenname.text() == '' or self.lineEdit_middlename.text() == '' or self.lineEdit_lastname.text() == '' or self.lineEdit_program.text() == '' or self.lineEdit_studentnumber.text() == '':
-           self.smsg('Please fill-up all fields!') 
+        homeadd = ''
+        inp = [self.lineEdit_address_1.text(), self.lineEdit_address_2.text(), self.lineEdit_address_3.text(), self.lineEdit_address_4.text(), self.lineEdit_address_5.text(), self.lineEdit_address_6.text()]
+        for part in inp:
+            if part != '':
+                homeadd += part + ' '
+                
+        if self.ses.register_advisee(self.lineEdit_studentnumber.text(), self.lineEdit_givenname.text(), self.lineEdit_middlename.text(), self.lineEdit_lastname.text(), self.lineEdit_program.text(), self.lineEdit_contactnumber.text(), homeadd, self.lineEdit_emailaddress.text()):
+            self.smsg('Register success!')
+            self.registered = True
+            form.close()
         else:
-            homeadd = '{} {}, {}, {}, {}, {}'.format(self.lineEdit_address_1.text(), self.lineEdit_address_2.text(), self.lineEdit_address_3.text(), self.lineEdit_address_4.text(), self.lineEdit_address_5.text(), self.lineEdit_address_6.text())
-            if self.ses.register_advisee(self.lineEdit_studentnumber.text(), self.lineEdit_givenname.text(), self.lineEdit_middlename.text(), self.lineEdit_lastname.text(), self.lineEdit_program.text(), self.lineEdit_contactnumber.text(), homeadd, self.lineEdit_emailaddress.text()):
-                self.smsg('Register success!')
-                self.registered = True
-                form.close()
-            else:
-                self.smsg(self.ses.errormsg)
+            self.smsg(self.ses.errormsg)
         
     def push_cancel(self, form):
         self.registered = False
@@ -140,8 +146,8 @@ class Ui_AdviseeRegister(object):
     def smsg(self, message):
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle('TutorialOn')
-        #icon = QtGui.QIcon("TutorialOn.png")
-        #msg.setWindowIcon(icon)
+        icon = QtGui.QIcon("../Resources/logo.png")
+        msg.setWindowIcon(icon)
         msg.setText(message)
         msg.exec_()
          

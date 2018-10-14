@@ -13,6 +13,10 @@ class Ui_Password(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(387, 146)
         
+        icon = QtGui.QIcon("../Resources/logo.png")
+        Dialog.setWindowIcon(icon)
+        Dialog.setWindowTitle("TutorialOn")
+        
         self.lineEdit_password = QtWidgets.QLineEdit(Dialog)
         self.lineEdit_password.setGeometry(QtCore.QRect(100, 50, 201, 20))
         self.lineEdit_password.setObjectName("lineEdit_password")
@@ -33,7 +37,7 @@ class Ui_Password(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "TutorialOn"))
         self.pushButton_login.setText(_translate("Dialog", "Login"))
         self.label_password.setText(_translate("Dialog", "Password:"))
 

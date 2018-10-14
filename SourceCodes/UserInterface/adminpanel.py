@@ -10,11 +10,18 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from BusinessLogic.Advisee import Advisee
 from BusinessLogic.PeerAdviser import PeerAdviser
 from BusinessLogic.Admin import Admin
+from UserInterface.passworddialog import Ui_Password
+from UserInterface import peeradviserregistration, adminregistration, adviseeregistration
 
 class Ui_AdminPanel(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(801, 550)
+        
+        icon = QtGui.QIcon("../Resources/logo.png")
+        Dialog.setWindowIcon(icon)
+        Dialog.setWindowTitle("TutorialOn")
+        
         self.admin_panel = QtWidgets.QGroupBox(Dialog)
         self.admin_panel.setGeometry(QtCore.QRect(10, 90, 121, 451))
         self.admin_panel.setTitle("")
@@ -39,25 +46,21 @@ class Ui_AdminPanel(object):
         self.pushButton_add.setAutoExclusive(True)
         self.pushButton_add.setObjectName("pushButton_add")
         self.pushButton_add.clicked.connect(lambda:self.push_add())
-        self.pushButton_modify = QtWidgets.QPushButton(self.admin_panel)
-        self.pushButton_modify.setGeometry(QtCore.QRect(10, 200, 101, 41))
-        self.pushButton_modify.setAutoExclusive(True)
-        self.pushButton_modify.setObjectName("pushButton_modify")
-        self.pushButton_modify.clicked.connect(lambda:self.push_modify())
         self.pushButton_email = QtWidgets.QPushButton(self.admin_panel)
-        self.pushButton_email.setGeometry(QtCore.QRect(10, 240, 101, 41))
+        self.pushButton_email.setGeometry(QtCore.QRect(10, 200, 101, 41))
         self.pushButton_email.setAutoExclusive(True)
         self.pushButton_email.setObjectName("pushButton_email")
         self.pushButton_email.clicked.connect(lambda:self.push_email())
-        self.pushButton_viewEvaluation = QtWidgets.QPushButton(self.admin_panel)
-        self.pushButton_viewEvaluation.setGeometry(QtCore.QRect(10, 280, 101, 41))
-        self.pushButton_viewEvaluation.setAutoExclusive(True)
-        self.pushButton_viewEvaluation.setObjectName("pushButton_viewEvaluation")
-        self.pushButton_viewEvaluation.clicked.connect(lambda:self.push_ve())
+        self.pushButton_logout = QtWidgets.QPushButton(self.admin_panel)
+        self.pushButton_logout.setGeometry(QtCore.QRect(10, 360, 101, 41))
+        self.pushButton_logout.setAutoExclusive(True)
+        self.pushButton_logout.setObjectName("pushButton_viewEvaluation")
+        self.pushButton_logout.clicked.connect(lambda:self.push_logout(Dialog))
         self.pushButton_clearDatabase = QtWidgets.QPushButton(self.admin_panel)
         self.pushButton_clearDatabase.setGeometry(QtCore.QRect(10, 400, 101, 41))
         self.pushButton_clearDatabase.setAutoExclusive(True)
         self.pushButton_clearDatabase.setObjectName("pushButton_clearDatabase")
+        self.pushButton_clearDatabase.clicked.connect(lambda: self.push_clear())
         self.label_adminPanel = QtWidgets.QLabel(self.admin_panel)
         self.label_adminPanel.setGeometry(QtCore.QRect(10, 10, 101, 16))
         self.label_adminPanel.setAlignment(QtCore.Qt.AlignCenter)
@@ -192,7 +195,7 @@ class Ui_AdminPanel(object):
         self.radioButton_vsl_searchByDate.toggled.connect(lambda: self.toggle_vsl_searchByDate())
         self.radioButton_vsl_searchByDate.setChecked(True)
         self.radioButton_vsl_searchByStudentNumber = QtWidgets.QRadioButton(self.vsl_panel)
-        self.radioButton_vsl_searchByStudentNumber.setGeometry(QtCore.QRect(70, 70, 171, 17))
+        self.radioButton_vsl_searchByStudentNumber.setGeometry(QtCore.QRect(70, 70, 181, 17))
         self.radioButton_vsl_searchByStudentNumber.setObjectName("radioButton_vsl_searchByStudentNumber")
         self.radioButton_vsl_searchByStudentNumber.toggled.connect(lambda: self.toggle_vsl_searchByStudentNumber())
         self.lineEdit_vsl_studentnumber = QtWidgets.QLineEdit(self.vsl_panel)
@@ -210,7 +213,7 @@ class Ui_AdminPanel(object):
         self.dateEdit_vsl.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(2018, 1, 1), QtCore.QTime(0, 0, 0)))
         self.dateEdit_vsl.setObjectName("dateEdit_vsl")
         self.tableWidget_vslbsn = QtWidgets.QTableWidget(self.vsl_panel)
-        self.tableWidget_vslbsn.setGeometry(QtCore.QRect(70, 110, 502, 311))
+        self.tableWidget_vslbsn.setGeometry(QtCore.QRect(45, 110, 550, 311))
         self.tableWidget_vslbsn.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableWidget_vslbsn.setAlternatingRowColors(True)
         self.tableWidget_vslbsn.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
@@ -228,7 +231,7 @@ class Ui_AdminPanel(object):
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget_vslbsn.setHorizontalHeaderItem(4, item)
         self.tableWidget_vslbd = QtWidgets.QTableWidget(self.vsl_panel)
-        self.tableWidget_vslbd.setGeometry(QtCore.QRect(70, 110, 502, 311))
+        self.tableWidget_vslbd.setGeometry(QtCore.QRect(45, 110, 550, 311))
         self.tableWidget_vslbd.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableWidget_vslbd.setAlternatingRowColors(True)
         self.tableWidget_vslbd.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
@@ -259,9 +262,12 @@ class Ui_AdminPanel(object):
         self.radioButton_vts_searchByDate = QtWidgets.QRadioButton(self.vts_panel)
         self.radioButton_vts_searchByDate.setGeometry(QtCore.QRect(100, 40, 91, 17))
         self.radioButton_vts_searchByDate.setObjectName("radioButton_vts_searchByDate")
+        self.radioButton_vts_searchByDate.toggled.connect(lambda: self.toggle_vts_searchByDate())
+        self.radioButton_vts_searchByDate.setChecked(True)
         self.radioButton_vts_searchByStudentNumber = QtWidgets.QRadioButton(self.vts_panel)
         self.radioButton_vts_searchByStudentNumber.setGeometry(QtCore.QRect(100, 70, 171, 17))
         self.radioButton_vts_searchByStudentNumber.setObjectName("radioButton_vts_searchByStudentNumber")
+        self.radioButton_vts_searchByStudentNumber.toggled.connect(lambda: self.toggle_vts_searchByStudentNumber())
         self.lineEdit_vts_studentnumber = QtWidgets.QLineEdit(self.vts_panel)
         self.lineEdit_vts_studentnumber.setEnabled(False)
         self.lineEdit_vts_studentnumber.setGeometry(QtCore.QRect(270, 71, 109, 21))
@@ -270,13 +276,14 @@ class Ui_AdminPanel(object):
         self.pushButton_vts_search.setEnabled(True)
         self.pushButton_vts_search.setGeometry(QtCore.QRect(430, 40, 81, 51))
         self.pushButton_vts_search.setObjectName("pushButton_vts_search")
+        self.pushButton_vts_search.clicked.connect(lambda: self.push_vts_search())
         self.dateEdit_vts = QtWidgets.QDateEdit(self.vts_panel)
         self.dateEdit_vts.setEnabled(True)
         self.dateEdit_vts.setGeometry(QtCore.QRect(270, 41, 109, 22))
         self.dateEdit_vts.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(2018, 1, 1), QtCore.QTime(0, 0, 0)))
         self.dateEdit_vts.setObjectName("dateEdit_vts")
         self.tableWidget_vtsbsn = QtWidgets.QTableWidget(self.vts_panel)
-        self.tableWidget_vtsbsn.setGeometry(QtCore.QRect(160, 110, 302, 311))
+        self.tableWidget_vtsbsn.setGeometry(QtCore.QRect(125, 110, 342, 311))
         self.tableWidget_vtsbsn.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableWidget_vtsbsn.setAlternatingRowColors(True)
         self.tableWidget_vtsbsn.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
@@ -290,7 +297,7 @@ class Ui_AdminPanel(object):
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget_vtsbsn.setHorizontalHeaderItem(2, item)
         self.tableWidget_vtsbd = QtWidgets.QTableWidget(self.vts_panel)
-        self.tableWidget_vtsbd.setGeometry(QtCore.QRect(160, 110, 302, 311))
+        self.tableWidget_vtsbd.setGeometry(QtCore.QRect(125, 110, 342, 311))
         self.tableWidget_vtsbd.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableWidget_vtsbd.setAlternatingRowColors(True)
         self.tableWidget_vtsbd.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
@@ -306,6 +313,7 @@ class Ui_AdminPanel(object):
         self.add_panel = QtWidgets.QGroupBox(Dialog)
         self.add_panel.setGeometry(QtCore.QRect(140, 90, 651, 451))
         self.add_panel.setTitle("")
+        
         self.add_panel.setObjectName("add_panel")
         self.radioButton_a_peeradviser = QtWidgets.QRadioButton(self.add_panel)
         self.radioButton_a_peeradviser.setGeometry(QtCore.QRect(170, 190, 91, 17))
@@ -317,217 +325,32 @@ class Ui_AdminPanel(object):
         self.pushButton_a_register.setEnabled(True)
         self.pushButton_a_register.setGeometry(QtCore.QRect(350, 180, 71, 41))
         self.pushButton_a_register.setObjectName("pushButton_a_register")
+        self.pushButton_a_register.clicked.connect(lambda: self.push_a_register())
         self.radioButton_a_advisee = QtWidgets.QRadioButton(self.add_panel)
         self.radioButton_a_advisee.setGeometry(QtCore.QRect(170, 160, 91, 17))
         self.radioButton_a_advisee.setObjectName("radioButton_a_advisee")
+        self.radioButton_a_advisee.setChecked(True)
         self.xx_26 = QtWidgets.QLabel(self.add_panel)
         self.xx_26.setGeometry(QtCore.QRect(170, 130, 241, 16))
         self.xx_26.setObjectName("xx_26")
-        self.modify_panel = QtWidgets.QGroupBox(Dialog)
-        self.modify_panel.setGeometry(QtCore.QRect(140, 90, 651, 451))
-        self.modify_panel.setTitle("")
-        self.modify_panel.setObjectName("modify_panel")
-        self.radioButton_m_peeradviser = QtWidgets.QRadioButton(self.modify_panel)
-        self.radioButton_m_peeradviser.setGeometry(QtCore.QRect(160, 50, 91, 17))
-        self.radioButton_m_peeradviser.setObjectName("radioButton_m_peeradviser")
-        self.pushButton_m_confirm = QtWidgets.QPushButton(self.modify_panel)
-        self.pushButton_m_confirm.setEnabled(True)
-        self.pushButton_m_confirm.setGeometry(QtCore.QRect(520, 390, 91, 31))
-        self.pushButton_m_confirm.setObjectName("pushButton_m_confirm")
-        self.radioButton_m_advisee = QtWidgets.QRadioButton(self.modify_panel)
-        self.radioButton_m_advisee.setGeometry(QtCore.QRect(50, 50, 91, 17))
-        self.radioButton_m_advisee.setObjectName("radioButton_m_advisee")
-        self.xx_27 = QtWidgets.QLabel(self.modify_panel)
-        self.xx_27.setGeometry(QtCore.QRect(50, 90, 141, 16))
-        self.xx_27.setObjectName("xx_27")
-        self.lineEdit_m_currentstudentnumber = QtWidgets.QLineEdit(self.modify_panel)
-        self.lineEdit_m_currentstudentnumber.setGeometry(QtCore.QRect(180, 90, 111, 20))
-        self.lineEdit_m_currentstudentnumber.setObjectName("lineEdit_m_currentstudentnumber")
-        self.groupBox_m_modifyp = QtWidgets.QGroupBox(self.modify_panel)
-        self.groupBox_m_modifyp.setGeometry(QtCore.QRect(30, 120, 591, 241))
-        self.groupBox_m_modifyp.setTitle("")
-        self.groupBox_m_modifyp.setObjectName("groupBox_m_modifyp")
-        self.checkBox_m_studentnumberp = QtWidgets.QCheckBox(self.groupBox_m_modifyp)
-        self.checkBox_m_studentnumberp.setGeometry(QtCore.QRect(30, 50, 111, 17))
-        self.checkBox_m_studentnumberp.setObjectName("checkBox_m_studentnumberp")
-        self.checkBox_m_namep = QtWidgets.QCheckBox(self.groupBox_m_modifyp)
-        self.checkBox_m_namep.setGeometry(QtCore.QRect(30, 20, 70, 17))
-        self.checkBox_m_namep.setObjectName("checkBox_m_namep")
-        self.checkBox_m_programp = QtWidgets.QCheckBox(self.groupBox_m_modifyp)
-        self.checkBox_m_programp.setGeometry(QtCore.QRect(30, 80, 111, 17))
-        self.checkBox_m_programp.setObjectName("checkBox_m_programp")
-        self.checkBox_m_organizationp = QtWidgets.QCheckBox(self.groupBox_m_modifyp)
-        self.checkBox_m_organizationp.setGeometry(QtCore.QRect(30, 110, 91, 17))
-        self.checkBox_m_organizationp.setObjectName("checkBox_m_organizationp")
-        self.checkBox_m_contactnumberp = QtWidgets.QCheckBox(self.groupBox_m_modifyp)
-        self.checkBox_m_contactnumberp.setGeometry(QtCore.QRect(30, 140, 121, 17))
-        self.checkBox_m_contactnumberp.setObjectName("checkBox_m_contactnumberp")
-        self.lineEdit_m_studentnumberp = QtWidgets.QLineEdit(self.groupBox_m_modifyp)
-        self.lineEdit_m_studentnumberp.setEnabled(False)
-        self.lineEdit_m_studentnumberp.setGeometry(QtCore.QRect(150, 50, 111, 20))
-        self.lineEdit_m_studentnumberp.setObjectName("lineEdit_m_studentnumberp")
-        self.checkBox_m_advisingschedule = QtWidgets.QCheckBox(self.groupBox_m_modifyp)
-        self.checkBox_m_advisingschedule.setGeometry(QtCore.QRect(30, 170, 121, 17))
-        self.checkBox_m_advisingschedule.setObjectName("checkBox_m_advisingschedule")
-        self.lineEdit_m_lastnamep = QtWidgets.QLineEdit(self.groupBox_m_modifyp)
-        self.lineEdit_m_lastnamep.setEnabled(False)
-        self.lineEdit_m_lastnamep.setGeometry(QtCore.QRect(90, 20, 151, 20))
-        self.lineEdit_m_lastnamep.setObjectName("lineEdit_m_lastnamep")
-        self.lineEdit_m_firstnamep = QtWidgets.QLineEdit(self.groupBox_m_modifyp)
-        self.lineEdit_m_firstnamep.setEnabled(False)
-        self.lineEdit_m_firstnamep.setGeometry(QtCore.QRect(260, 20, 151, 20))
-        self.lineEdit_m_firstnamep.setText("")
-        self.lineEdit_m_firstnamep.setObjectName("lineEdit_m_firstnamep")
-        self.lineEdit_m_middlenamep = QtWidgets.QLineEdit(self.groupBox_m_modifyp)
-        self.lineEdit_m_middlenamep.setEnabled(False)
-        self.lineEdit_m_middlenamep.setGeometry(QtCore.QRect(430, 20, 151, 20))
-        self.lineEdit_m_middlenamep.setObjectName("lineEdit_m_middlenamep")
-        self.lineEdit_m_programp = QtWidgets.QLineEdit(self.groupBox_m_modifyp)
-        self.lineEdit_m_programp.setEnabled(False)
-        self.lineEdit_m_programp.setGeometry(QtCore.QRect(150, 80, 111, 20))
-        self.lineEdit_m_programp.setPlaceholderText("")
-        self.lineEdit_m_programp.setObjectName("lineEdit_m_programp")
-        self.lineEdit_m_organizationp = QtWidgets.QLineEdit(self.groupBox_m_modifyp)
-        self.lineEdit_m_organizationp.setEnabled(False)
-        self.lineEdit_m_organizationp.setGeometry(QtCore.QRect(150, 110, 111, 20))
-        self.lineEdit_m_organizationp.setPlaceholderText("")
-        self.lineEdit_m_organizationp.setObjectName("lineEdit_m_organizationp")
-        self.lineEdit_m_contactnumberp = QtWidgets.QLineEdit(self.groupBox_m_modifyp)
-        self.lineEdit_m_contactnumberp.setEnabled(False)
-        self.lineEdit_m_contactnumberp.setGeometry(QtCore.QRect(150, 140, 111, 20))
-        self.lineEdit_m_contactnumberp.setPlaceholderText("")
-        self.lineEdit_m_contactnumberp.setObjectName("lineEdit_m_contactnumberp")
-        self.comboBox_m_day1 = QtWidgets.QComboBox(self.groupBox_m_modifyp)
-        self.comboBox_m_day1.setEnabled(False)
-        self.comboBox_m_day1.setGeometry(QtCore.QRect(150, 170, 91, 22))
-        self.comboBox_m_day1.setObjectName("comboBox_m_day1")
-        self.comboBox_m_day1.addItem("")
-        self.comboBox_m_day1.addItem("")
-        self.comboBox_m_day1.addItem("")
-        self.comboBox_m_day1.addItem("")
-        self.comboBox_m_day1.addItem("")
-        self.comboBox_m_day1.addItem("")
-        self.comboBox_m_time1 = QtWidgets.QComboBox(self.groupBox_m_modifyp)
-        self.comboBox_m_time1.setEnabled(False)
-        self.comboBox_m_time1.setGeometry(QtCore.QRect(250, 170, 151, 22))
-        self.comboBox_m_time1.setObjectName("comboBox_m_time1")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_time1.addItem("")
-        self.comboBox_m_day2 = QtWidgets.QComboBox(self.groupBox_m_modifyp)
-        self.comboBox_m_day2.setEnabled(False)
-        self.comboBox_m_day2.setGeometry(QtCore.QRect(150, 200, 91, 22))
-        self.comboBox_m_day2.setObjectName("comboBox_m_day2")
-        self.comboBox_m_day2.addItem("")
-        self.comboBox_m_day2.addItem("")
-        self.comboBox_m_day2.addItem("")
-        self.comboBox_m_day2.addItem("")
-        self.comboBox_m_day2.addItem("")
-        self.comboBox_m_day2.addItem("")
-        self.comboBox_m_time2 = QtWidgets.QComboBox(self.groupBox_m_modifyp)
-        self.comboBox_m_time2.setEnabled(False)
-        self.comboBox_m_time2.setGeometry(QtCore.QRect(250, 200, 151, 22))
-        self.comboBox_m_time2.setObjectName("comboBox_m_time2")
-        self.comboBox_m_time2.addItem("")
-        self.comboBox_m_time2.addItem("")
-        self.comboBox_m_time2.addItem("")
-        self.comboBox_m_time2.addItem("")
-        self.comboBox_m_time2.addItem("")
-        self.comboBox_m_time2.addItem("")
-        self.comboBox_m_time2.addItem("")
-        self.comboBox_m_time2.addItem("")
-        self.comboBox_m_time2.addItem("")
-        self.groupBox_m_modifya = QtWidgets.QGroupBox(self.modify_panel)
-        self.groupBox_m_modifya.setGeometry(QtCore.QRect(30, 120, 591, 241))
-        self.groupBox_m_modifya.setTitle("")
-        self.groupBox_m_modifya.setObjectName("groupBox_m_modifya")
-        self.checkBox_m_studentnumbera = QtWidgets.QCheckBox(self.groupBox_m_modifya)
-        self.checkBox_m_studentnumbera.setGeometry(QtCore.QRect(30, 50, 111, 17))
-        self.checkBox_m_studentnumbera.setObjectName("checkBox_m_studentnumbera")
-        self.checkBox_m_namea = QtWidgets.QCheckBox(self.groupBox_m_modifya)
-        self.checkBox_m_namea.setGeometry(QtCore.QRect(30, 20, 70, 17))
-        self.checkBox_m_namea.setObjectName("checkBox_m_namea")
-        self.checkBox_m_programa = QtWidgets.QCheckBox(self.groupBox_m_modifya)
-        self.checkBox_m_programa.setGeometry(QtCore.QRect(30, 80, 111, 17))
-        self.checkBox_m_programa.setObjectName("checkBox_m_programa")
-        self.checkBox_m_emailaddressa = QtWidgets.QCheckBox(self.groupBox_m_modifya)
-        self.checkBox_m_emailaddressa.setGeometry(QtCore.QRect(30, 140, 91, 17))
-        self.checkBox_m_emailaddressa.setObjectName("checkBox_m_emailaddressa")
-        self.checkBox_m_contactnumbera = QtWidgets.QCheckBox(self.groupBox_m_modifya)
-        self.checkBox_m_contactnumbera.setGeometry(QtCore.QRect(30, 110, 121, 17))
-        self.checkBox_m_contactnumbera.setObjectName("checkBox_m_contactnumbera")
-        self.lineEdit_m_studentnumbera = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_studentnumbera.setEnabled(False)
-        self.lineEdit_m_studentnumbera.setGeometry(QtCore.QRect(150, 50, 111, 20))
-        self.lineEdit_m_studentnumbera.setObjectName("lineEdit_m_studentnumbera")
-        self.checkBox_m_homeaddress = QtWidgets.QCheckBox(self.groupBox_m_modifya)
-        self.checkBox_m_homeaddress.setGeometry(QtCore.QRect(30, 170, 121, 17))
-        self.checkBox_m_homeaddress.setObjectName("checkBox_m_homeaddress")
-        self.lineEdit_m_lastnamea = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_lastnamea.setEnabled(False)
-        self.lineEdit_m_lastnamea.setGeometry(QtCore.QRect(90, 20, 151, 20))
-        self.lineEdit_m_lastnamea.setObjectName("lineEdit_m_lastnamea")
-        self.lineEdit_m_firstnamea = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_firstnamea.setEnabled(False)
-        self.lineEdit_m_firstnamea.setGeometry(QtCore.QRect(260, 20, 151, 20))
-        self.lineEdit_m_firstnamea.setText("")
-        self.lineEdit_m_firstnamea.setObjectName("lineEdit_m_firstnamea")
-        self.lineEdit_m_middlenamea = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_middlenamea.setEnabled(False)
-        self.lineEdit_m_middlenamea.setGeometry(QtCore.QRect(430, 20, 151, 20))
-        self.lineEdit_m_middlenamea.setObjectName("lineEdit_m_middlenamea")
-        self.lineEdit_m_programa = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_programa.setEnabled(False)
-        self.lineEdit_m_programa.setGeometry(QtCore.QRect(150, 80, 111, 20))
-        self.lineEdit_m_programa.setPlaceholderText("")
-        self.lineEdit_m_programa.setObjectName("lineEdit_m_programa")
-        self.lineEdit_m_emailaddress = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_emailaddress.setEnabled(False)
-        self.lineEdit_m_emailaddress.setGeometry(QtCore.QRect(150, 140, 201, 20))
-        self.lineEdit_m_emailaddress.setObjectName("lineEdit_m_emailaddress")
-        self.lineEdit_m_contactnumbera = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_contactnumbera.setEnabled(False)
-        self.lineEdit_m_contactnumbera.setGeometry(QtCore.QRect(150, 110, 111, 20))
-        self.lineEdit_m_contactnumbera.setPlaceholderText("")
-        self.lineEdit_m_contactnumbera.setObjectName("lineEdit_m_contactnumbera")
-        self.lineEdit_m_address1 = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_address1.setEnabled(False)
-        self.lineEdit_m_address1.setGeometry(QtCore.QRect(150, 170, 61, 20))
-        self.lineEdit_m_address1.setObjectName("lineEdit_m_address1")
-        self.lineEdit_m_address2 = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_address2.setEnabled(False)
-        self.lineEdit_m_address2.setGeometry(QtCore.QRect(220, 170, 131, 20))
-        self.lineEdit_m_address2.setObjectName("lineEdit_m_address2")
-        self.lineEdit_m_address3 = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_address3.setEnabled(False)
-        self.lineEdit_m_address3.setGeometry(QtCore.QRect(360, 170, 141, 20))
-        self.lineEdit_m_address3.setObjectName("lineEdit_m_address3")
-        self.lineEdit_m_address4 = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_address4.setEnabled(False)
-        self.lineEdit_m_address4.setGeometry(QtCore.QRect(150, 200, 131, 20))
-        self.lineEdit_m_address4.setObjectName("lineEdit_m_address4")
-        self.lineEdit_m_address5 = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_address5.setEnabled(False)
-        self.lineEdit_m_address5.setGeometry(QtCore.QRect(290, 200, 131, 20))
-        self.lineEdit_m_address5.setObjectName("lineEdit_m_address5")
-        self.lineEdit_m_address6 = QtWidgets.QLineEdit(self.groupBox_m_modifya)
-        self.lineEdit_m_address6.setEnabled(False)
-        self.lineEdit_m_address6.setGeometry(QtCore.QRect(430, 200, 131, 20))
-        self.lineEdit_m_address6.setObjectName("lineEdit_m_address6")
         self.email_panel = QtWidgets.QGroupBox(Dialog)
         self.email_panel.setGeometry(QtCore.QRect(140, 90, 651, 451))
         self.email_panel.setTitle("")
         self.email_panel.setObjectName("email_panel")
+        self.radioButton_e_allPeerAdvisers = QtWidgets.QRadioButton(self.email_panel)
+        self.radioButton_e_allPeerAdvisers.setGeometry(QtCore.QRect(220, 30, 161, 16))
+        self.radioButton_e_allPeerAdvisers.setObjectName("radioButton_e_allPeerAdvisers")
+        self.radioButton_e_allAdvisees = QtWidgets.QRadioButton(self.email_panel)
+        self.radioButton_e_allAdvisees.setGeometry(QtCore.QRect(120, 30, 80, 16))
+        self.radioButton_e_allAdvisees.setObjectName("radioButton_e_allAdvisees")
+        self.radioButton_e_allAdvisees.setChecked(True)
+        self.radioButton_e_allPeerAdvisers.raise_()
+        self.radioButton_e_allAdvisees.raise_()
         self.pushButton_e_send = QtWidgets.QPushButton(self.email_panel)
         self.pushButton_e_send.setEnabled(True)
         self.pushButton_e_send.setGeometry(QtCore.QRect(290, 370, 81, 31))
         self.pushButton_e_send.setObjectName("pushButton_e_send")
+        self.pushButton_e_send.clicked.connect(lambda: self.push_e_send())
         self.lineEdit_e_subject = QtWidgets.QLineEdit(self.email_panel)
         self.lineEdit_e_subject.setGeometry(QtCore.QRect(90, 60, 521, 20))
         self.lineEdit_e_subject.setObjectName("lineEdit_e_subject")
@@ -541,27 +364,8 @@ class Ui_AdminPanel(object):
         self.xx_40.setGeometry(QtCore.QRect(40, 100, 41, 16))
         self.xx_40.setObjectName("xx_40")
         self.xx_38 = QtWidgets.QLabel(self.email_panel)
-        self.xx_38.setGeometry(QtCore.QRect(40, 30, 161, 16))
+        self.xx_38.setGeometry(QtCore.QRect(40, 30, 71, 16))
         self.xx_38.setObjectName("xx_38")
-        self.ve_panel = QtWidgets.QGroupBox(Dialog)
-        self.ve_panel.setGeometry(QtCore.QRect(140, 90, 651, 451))
-        self.ve_panel.setTitle("")
-        self.ve_panel.setObjectName("ve_panel")
-        self.pushButton_ve_view = QtWidgets.QPushButton(self.ve_panel)
-        self.pushButton_ve_view.setEnabled(True)
-        self.pushButton_ve_view.setGeometry(QtCore.QRect(280, 230, 81, 31))
-        self.pushButton_ve_view.setObjectName("pushButton_ve_view")
-        self.dateEdit_ve = QtWidgets.QDateEdit(self.ve_panel)
-        self.dateEdit_ve.setGeometry(QtCore.QRect(292, 178, 121, 22))
-        self.dateEdit_ve.setMaximumDate(QtCore.QDate(7999, 12, 31))
-        self.dateEdit_ve.setMinimumDate(QtCore.QDate(2018, 1, 1))
-        self.dateEdit_ve.setObjectName("dateEdit_ve")
-        self.xx_41 = QtWidgets.QLabel(self.ve_panel)
-        self.xx_41.setGeometry(QtCore.QRect(240, 180, 51, 16))
-        self.xx_41.setObjectName("xx_41")
-        self.xx_42 = QtWidgets.QLabel(self.ve_panel)
-        self.xx_42.setGeometry(QtCore.QRect(240, 150, 171, 16))
-        self.xx_42.setObjectName("xx_42")
         self.hide_panels()
         self.vsi_panel.setVisible(True)
 
@@ -570,17 +374,15 @@ class Ui_AdminPanel(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "TutorialOn"))
         self.pushButton_viewSessionLog.setText(_translate("Dialog", "View\n"
 "Session Log"))
         self.pushButton_viewTimeSheetLog.setText(_translate("Dialog", "View\n"
 "Timesheet Log"))
         self.pushButton_add.setText(_translate("Dialog", "Add"))
-        self.pushButton_modify.setText(_translate("Dialog", "Modify"))
         self.pushButton_clearDatabase.setText(_translate("Dialog", "Clear Database"))
         self.pushButton_email.setText(_translate("Dialog", "Email"))
-        self.pushButton_viewEvaluation.setText(_translate("Dialog", "View\n"
-"Evaluation"))
+        self.pushButton_logout.setText(_translate("Dialog", "Logout"))
         self.label_adminPanel.setText(_translate("Dialog", "Admin Panel"))
         self.pushButton_viewStudentInfo.setText(_translate("Dialog", "View\n"
 "Student Info"))
@@ -646,76 +448,12 @@ class Ui_AdminPanel(object):
         self.pushButton_a_register.setText(_translate("Dialog", "Register"))
         self.radioButton_a_advisee.setText(_translate("Dialog", "Advisee"))
         self.xx_26.setText(_translate("Dialog", "Choose a user type to register:"))
-        self.radioButton_m_peeradviser.setText(_translate("Dialog", "Peer Adviser"))
-        self.pushButton_m_confirm.setText(_translate("Dialog", "Confirm"))
-        self.radioButton_m_advisee.setText(_translate("Dialog", "Advisee"))
-        self.xx_27.setText(_translate("Dialog", "Current student number:"))
-        self.lineEdit_m_currentstudentnumber.setPlaceholderText(_translate("Dialog", "Student Number"))
-        self.checkBox_m_studentnumberp.setText(_translate("Dialog", "Student Number"))
-        self.checkBox_m_namep.setText(_translate("Dialog", "Name"))
-        self.checkBox_m_programp.setText(_translate("Dialog", "Program"))
-        self.checkBox_m_organizationp.setText(_translate("Dialog", "Organization"))
-        self.checkBox_m_contactnumberp.setText(_translate("Dialog", "Contact Number"))
-        self.lineEdit_m_studentnumberp.setPlaceholderText(_translate("Dialog", "Student Number"))
-        self.checkBox_m_advisingschedule.setText(_translate("Dialog", "Advising Schedule"))
-        self.lineEdit_m_lastnamep.setPlaceholderText(_translate("Dialog", "Last Name"))
-        self.lineEdit_m_firstnamep.setPlaceholderText(_translate("Dialog", "Given Name"))
-        self.lineEdit_m_middlenamep.setPlaceholderText(_translate("Dialog", "Middle Name"))
-        self.comboBox_m_day1.setItemText(0, _translate("Dialog", "Monday"))
-        self.comboBox_m_day1.setItemText(1, _translate("Dialog", "Tuesday"))
-        self.comboBox_m_day1.setItemText(2, _translate("Dialog", "Wednesday"))
-        self.comboBox_m_day1.setItemText(3, _translate("Dialog", "Thursday"))
-        self.comboBox_m_day1.setItemText(4, _translate("Dialog", "Friday"))
-        self.comboBox_m_day1.setItemText(5, _translate("Dialog", "Saturday"))
-        self.comboBox_m_time1.setItemText(0, _translate("Dialog", "7:30-9:00"))
-        self.comboBox_m_time1.setItemText(1, _translate("Dialog", "9:00-10:30"))
-        self.comboBox_m_time1.setItemText(2, _translate("Dialog", "10:30-12:00"))
-        self.comboBox_m_time1.setItemText(3, _translate("Dialog", "12:00-13:30"))
-        self.comboBox_m_time1.setItemText(4, _translate("Dialog", "13:30-15:00"))
-        self.comboBox_m_time1.setItemText(5, _translate("Dialog", "15:00-16:30"))
-        self.comboBox_m_time1.setItemText(6, _translate("Dialog", "16:30-18:00"))
-        self.comboBox_m_time1.setItemText(7, _translate("Dialog", "18:00-19:30"))
-        self.comboBox_m_time1.setItemText(8, _translate("Dialog", "19:30-21:00"))
-        self.comboBox_m_day2.setItemText(0, _translate("Dialog", "Monday"))
-        self.comboBox_m_day2.setItemText(1, _translate("Dialog", "Tuesday"))
-        self.comboBox_m_day2.setItemText(2, _translate("Dialog", "Wednesday"))
-        self.comboBox_m_day2.setItemText(3, _translate("Dialog", "Thursday"))
-        self.comboBox_m_day2.setItemText(4, _translate("Dialog", "Friday"))
-        self.comboBox_m_day2.setItemText(5, _translate("Dialog", "Saturday"))
-        self.comboBox_m_time2.setItemText(0, _translate("Dialog", "7:30-9:00"))
-        self.comboBox_m_time2.setItemText(1, _translate("Dialog", "9:00-10:30"))
-        self.comboBox_m_time2.setItemText(2, _translate("Dialog", "10:30-12:00"))
-        self.comboBox_m_time2.setItemText(3, _translate("Dialog", "12:00-13:30"))
-        self.comboBox_m_time2.setItemText(4, _translate("Dialog", "13:30-15:00"))
-        self.comboBox_m_time2.setItemText(5, _translate("Dialog", "15:00-16:30"))
-        self.comboBox_m_time2.setItemText(6, _translate("Dialog", "16:30-18:00"))
-        self.comboBox_m_time2.setItemText(7, _translate("Dialog", "18:00-19:30"))
-        self.comboBox_m_time2.setItemText(8, _translate("Dialog", "19:30-21:00"))
-        self.checkBox_m_studentnumbera.setText(_translate("Dialog", "Student Number"))
-        self.checkBox_m_namea.setText(_translate("Dialog", "Name"))
-        self.checkBox_m_programa.setText(_translate("Dialog", "Program"))
-        self.checkBox_m_emailaddressa.setText(_translate("Dialog", "Mymail Address"))
-        self.checkBox_m_contactnumbera.setText(_translate("Dialog", "Contact Number"))
-        self.lineEdit_m_studentnumbera.setPlaceholderText(_translate("Dialog", "Student Number"))
-        self.checkBox_m_homeaddress.setText(_translate("Dialog", "Home Address"))
-        self.lineEdit_m_lastnamea.setPlaceholderText(_translate("Dialog", "Last Name"))
-        self.lineEdit_m_firstnamea.setPlaceholderText(_translate("Dialog", "Given Name"))
-        self.lineEdit_m_middlenamea.setPlaceholderText(_translate("Dialog", "Middle Name"))
-        self.lineEdit_m_emailaddress.setPlaceholderText(_translate("Dialog", "someone@mymail.mapua.edu.ph"))
-        self.lineEdit_m_address1.setPlaceholderText(_translate("Dialog", "No."))
-        self.lineEdit_m_address2.setPlaceholderText(_translate("Dialog", "Street"))
-        self.lineEdit_m_address3.setPlaceholderText(_translate("Dialog", "Barangay"))
-        self.lineEdit_m_address4.setPlaceholderText(_translate("Dialog", "Town"))
-        self.lineEdit_m_address5.setPlaceholderText(_translate("Dialog", "City"))
-        self.lineEdit_m_address6.setPlaceholderText(_translate("Dialog", "State"))
+        self.radioButton_e_allAdvisees.setText(_translate("Dialog", "All Advisees"))
+        self.radioButton_e_allPeerAdvisers.setText(_translate("Dialog", "All Peer Advisers"))
         self.pushButton_e_send.setText(_translate("Dialog", "Send"))
         self.xx_39.setText(_translate("Dialog", "Subject:"))
         self.xx_40.setText(_translate("Dialog", "Body"))
-        self.xx_38.setText(_translate("Dialog", "Recipient: All advisees"))
-        self.pushButton_ve_view.setText(_translate("Dialog", "View"))
-        self.dateEdit_ve.setDisplayFormat(_translate("Dialog", "M/yyyy"))
-        self.xx_41.setText(_translate("Dialog", "MM/YYYY:"))
-        self.xx_42.setText(_translate("Dialog", "View evaluation for:"))
+        self.xx_38.setText(_translate("Dialog", "Recipient:"))
 
     def connect_session(self, session):
         self.ses = session
@@ -726,9 +464,7 @@ class Ui_AdminPanel(object):
         self.vsl_panel.setVisible(False)
         self.vts_panel.setVisible(False)
         self.add_panel.setVisible(False)
-        self.modify_panel.setVisible(False)
         self.email_panel.setVisible(False)
-        self.ve_panel.setVisible(False)
         
     #View Student Information Panel Functions
     
@@ -798,31 +534,118 @@ class Ui_AdminPanel(object):
         self.vsl_panel.setVisible(True)
             
     def toggle_vsl_searchByDate(self):
+        self.tableWidget_vslbd.setRowCount(0)
         if self.radioButton_vsl_searchByDate.isChecked():
             self.dateEdit_vsl.setEnabled(True)      
+            self.tableWidget_vslbd.setVisible(True)
         else:
             self.dateEdit_vsl.setEnabled(False)
+            self.tableWidget_vslbd.setVisible(False)
     
     def toggle_vsl_searchByStudentNumber(self):
+        self.lineEdit_vsl_studentnumber.clear()
+        self.tableWidget_vslbsn.setRowCount(0)
         if self.radioButton_vsl_searchByStudentNumber.isChecked():
             self.lineEdit_vsl_studentnumber.setEnabled(True)
+            self.tableWidget_vslbsn.setVisible(True)
         else:
-            self.lineEdit_vsl_studentnumber.setEnabled(False)        
+            self.lineEdit_vsl_studentnumber.setEnabled(False)     
+            self.tableWidget_vslbsn.setVisible(False)
             
     def push_vsl_search(self):
         if self.radioButton_vsl_searchByDate.isChecked():
-            date = self.dateEdit_vsl.text().replace('/','-')
-            x, studentnumber, timein, timeout, subject, adviserid = self.admin.get_dailysessionlog(date)
-            for n in x:
-                
+            month, day, year = self.dateEdit_vsl.text().split('/')
+            if len(month) == 1:
+                month = '0' + month
+            if len(day) == 1:
+                day = '0' + day
+            date = month + '-' + day + '-' + year
+            count = len(self.admin.get_dailysessionlog(date))
+            self.tableWidget_vslbd.setRowCount(count)
+            if count > 0:
+                column = 0
+                for studentnumber, timein, timeout, subject, adviserid in self.admin.get_dailysessionlog(date):     
+                    self.tableWidget_vslbd.setItem(column, 0, QtWidgets.QTableWidgetItem(str(studentnumber)))
+                    self.tableWidget_vslbd.setItem(column, 1, QtWidgets.QTableWidgetItem(timein))
+                    self.tableWidget_vslbd.setItem(column, 2, QtWidgets.QTableWidgetItem(timeout))
+                    self.tableWidget_vslbd.setItem(column, 3, QtWidgets.QTableWidgetItem(subject))
+                    self.tableWidget_vslbd.setItem(column, 4, QtWidgets.QTableWidgetItem(str(adviserid)))
+                    column += 1
+            else:
+                self.smsg("No record.")
         else:
-            pass
-            
+            studentnumber = self.lineEdit_vsl_studentnumber.text()
+            count = len(self.admin.get_studentsessionlog(studentnumber))
+            self.tableWidget_vslbsn.setRowCount(count)
+            if count > 0:
+                column = 0
+                for date, timein, timeout, subject, adviserid in self.admin.get_studentsessionlog(studentnumber):     
+                    self.tableWidget_vslbsn.setItem(column, 0, QtWidgets.QTableWidgetItem(date))
+                    self.tableWidget_vslbsn.setItem(column, 1, QtWidgets.QTableWidgetItem(timein))
+                    self.tableWidget_vslbsn.setItem(column, 2, QtWidgets.QTableWidgetItem(timeout))
+                    self.tableWidget_vslbsn.setItem(column, 3, QtWidgets.QTableWidgetItem(subject))
+                    self.tableWidget_vslbsn.setItem(column, 4, QtWidgets.QTableWidgetItem(str(adviserid)))
+                    column += 1
+            else:
+                self.smsg("No record.")
+                
     #View Timesheet Log Panel Functions
         
     def push_vts(self):
         self.hide_panels()
         self.vts_panel.setVisible(True)
+        
+    def toggle_vts_searchByDate(self):
+        self.tableWidget_vtsbd.setRowCount(0)
+        if self.radioButton_vts_searchByDate.isChecked():
+            self.dateEdit_vts.setEnabled(True)      
+            self.tableWidget_vtsbd.setVisible(True)
+        else:
+            self.dateEdit_vts.setEnabled(False)
+            self.tableWidget_vtsbd.setVisible(False)
+    
+    def toggle_vts_searchByStudentNumber(self):
+        self.lineEdit_vts_studentnumber.clear()
+        self.tableWidget_vtsbsn.setRowCount(0)
+        if self.radioButton_vts_searchByStudentNumber.isChecked():
+            self.lineEdit_vts_studentnumber.setEnabled(True)
+            self.tableWidget_vtsbsn.setVisible(True)
+        else:
+            self.lineEdit_vts_studentnumber.setEnabled(False)     
+            self.tableWidget_vtsbsn.setVisible(False)
+            
+    def push_vts_search(self):
+        if self.radioButton_vts_searchByDate.isChecked():
+            month, day, year = self.dateEdit_vts.text().split('/')
+            if len(month) == 1:
+                month = '0' + month
+            if len(day) == 1:
+                day = '0' + day
+            date = month + '-' + day + '-' + year
+            count = len(self.admin.get_dailytimesheet(date))
+            self.tableWidget_vtsbd.setRowCount(count)
+            if count > 0:
+                column = 0
+                for studentnumber, timein, timeout in self.admin.get_dailytimesheet(date):     
+                    self.tableWidget_vtsbd.setItem(column, 0, QtWidgets.QTableWidgetItem(str(studentnumber)))
+                    self.tableWidget_vtsbd.setItem(column, 1, QtWidgets.QTableWidgetItem(timein))
+                    self.tableWidget_vtsbd.setItem(column, 2, QtWidgets.QTableWidgetItem(timeout))
+                    column += 1
+            else:
+                self.smsg("No record.")
+        else:
+            studentnumber = self.lineEdit_vts_studentnumber.text()
+            count = len(self.admin.get_studenttimesheet(studentnumber))
+            self.tableWidget_vtsbsn.setRowCount(count)
+            if count > 0:
+                column = 0
+                for date, timein, timeout in self.admin.get_studenttimesheet(studentnumber):     
+                    self.tableWidget_vtsbsn.setItem(column, 0, QtWidgets.QTableWidgetItem(date))
+                    self.tableWidget_vtsbsn.setItem(column, 1, QtWidgets.QTableWidgetItem(timein))
+                    self.tableWidget_vtsbsn.setItem(column, 2, QtWidgets.QTableWidgetItem(timeout))
+                    column += 1
+            else:
+                self.smsg("No record.")
         
     #Add user panel functions
         
@@ -830,11 +653,26 @@ class Ui_AdminPanel(object):
         self.hide_panels()
         self.add_panel.setVisible(True)
         
-    #Modify user panel functions
         
-    def push_modify(self):
-        self.hide_panels()
-        self.modify_panel.setVisible(True)
+    def push_a_register(self):
+        if self.radioButton_a_admin.isChecked():
+            registrationform = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+            ui = adminregistration.Ui_AdminRegister()
+            ui.setupUi(registrationform)
+            ui.connect_session(self.admin)
+            registrationform.exec_()
+        elif self.radioButton_a_advisee.isChecked():
+            registrationform = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+            ui = adviseeregistration.Ui_AdviseeRegister()
+            ui.setupUi(registrationform)
+            ui.connect_session(self.ses)
+            registrationform.exec_()
+        else:
+            registrationform = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+            ui = peeradviserregistration.Ui_PeerAdviserRegister()
+            ui.setupUi(registrationform)
+            ui.connect_session(self.admin)
+            registrationform.exec_()
         
     #Send email panel functions
         
@@ -842,21 +680,56 @@ class Ui_AdminPanel(object):
         self.hide_panels()
         self.email_panel.setVisible(True)
         
-    #View evaulation panel functions
+    def push_e_send(self):
         
-    def push_ve(self):
-        self.hide_panels()
-        self.ve_panel.setVisible(True)
+        PasswordDialog = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+        ui = Ui_Password()
+        ui.setupUi(PasswordDialog)
+        PasswordDialog.exec_()
+        if ui.loggedin:
+            password = ui.lineEdit_password.text()
+            if self.radioButton_e_allAdvisees.isChecked():
+                drop = self.admin.email_advisee(password, self.lineEdit_e_subject.text(), self.textEdit_e_body.toPlainText())
+                if drop != 0:
+                    self.smsg(drop + " messages failed to send.")
+                else:
+                    self.smsg("Message sent succesfully to all recepients")
+            else:
+                drop = self.admin.email_adviser(password, self.lineEdit_e_subject.text(), self.textEdit_e_body.toPlainText())
+                if drop != 0:
+                    self.smsg(drop + " messages failed to send.")
+                else:
+                    self.smsg("Message sent succesfully to all recepients")
+        else:
+            print('hi')
+                
+
+    #Logout
+    
+    def push_logout(self, form):
+        form.close()
 
 
-
+    #Clear
+    def push_clear(self):
+        PasswordDialog = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+        ui = Ui_Password()
+        ui.setupUi(PasswordDialog)
+        PasswordDialog.exec_()
+        password = ui.lineEdit_password.text()
+        if self.ses.login_admin(self.admin.adminid, password):
+            self.admin.clear_database()
+            self.smsg("Database cleared.")
+        else:
+            self.smsg("Error: Authentication failed")
+            
     #############
     
     def smsg(self, message):
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle('TutorialOn')
-        #icon = QtGui.QIcon("TutorialOn.png")
-        #msg.setWindowIcon(icon)
+        icon = QtGui.QIcon("../Resources/logo.png")
+        msg.setWindowIcon(icon)
         msg.setText(message)
         msg.exec_()
         

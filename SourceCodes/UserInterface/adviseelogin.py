@@ -22,6 +22,10 @@ class Ui_Advisee(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 430)
         
+        icon = QtGui.QIcon("../Resources/logo.png")
+        MainWindow.setWindowIcon(icon)
+        MainWindow.setWindowTitle("TutorialOn")
+        
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
@@ -157,7 +161,7 @@ class Ui_Advisee(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "TutorialOn"))
         self.pushButton_admin.setText(_translate("MainWindow", "Administrator"))
         self.label_program.setText(_translate("MainWindow", "Program:"))
         self.radioButton_mathematics.setText(_translate("MainWindow", "Mathematics"))
@@ -307,8 +311,8 @@ class Ui_Advisee(object):
     def smsg(self, message):
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle('TutorialOn')
-        #icon = QtGui.QIcon("TutorialOn.png")
-        #msg.setWindowIcon(icon)
+        icon = QtGui.QIcon("../Resources/logo.png")
+        msg.setWindowIcon(icon)
         msg.setText(message)
         msg.exec_()
             

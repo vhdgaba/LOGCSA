@@ -12,6 +12,11 @@ class Ui_PeerDialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(400, 300)
+        
+        icon = QtGui.QIcon("../Resources/logo.png")
+        Dialog.setWindowIcon(icon)
+        Dialog.setWindowTitle("TutorialOn")
+        
         self.listWidget = QtWidgets.QListWidget(Dialog)
         self.listWidget.setGeometry(QtCore.QRect(20, 20, 360, 211))
         self.listWidget.setObjectName("listWidget")
@@ -31,7 +36,7 @@ class Ui_PeerDialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "TutorialOn"))
         self.pushButton_select.setText(_translate("Dialog", "Select"))
         self.pushButton_cancel.setText(_translate("Dialog", "Cancel"))
         

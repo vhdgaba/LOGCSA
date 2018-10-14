@@ -24,7 +24,6 @@ class FileHandler:
 
     def clear_database(self):
         self.cs.execute('DELETE FROM Login')
-        self.cs.execute('DELETE FROM Admin')
         self.cs.execute('DELETE FROM Advisee')
         self.cs.execute('DELETE FROM PeerAdviser')
         self.cs.execute('DELETE FROM SessionLog')
@@ -163,22 +162,22 @@ class FileHandler:
 
     #Returns the session log of an advisee
     def get_studentsessionlog(self, studentnumber):
-        self.cs.execute("SELECT * FROM SessionLog WHERE StudentNumber=?", (studentnumber,))
+        self.cs.execute("SELECT Date, TimeIn, TimeOut, Subject, AdviserID FROM SessionLog WHERE StudentNumber=?", (studentnumber,))
         return self.cs.fetchall()
 
     #Returns the timesheet record of a peer adviser
     def get_studenttimesheet(self, studentnumber):
-        self.cs.execute("SELECT * FROM TimeSheet WHERE StudentNumber=?", (studentnumber,))
+        self.cs.execute("SELECT Date, TimeIn, TimeOut FROM TimeSheet WHERE StudentNumber=?", (studentnumber,))
         return self.cs.fetchall()
 
     #Returns the session log of an advisee
     def get_dailysessionlog(self, date):
-        self.cs.execute("SELECT * FROM SessionLog WHERE Date=?", (date,))
+        self.cs.execute("SELECT StudentNumber, TimeIn, TimeOut, Subject, AdviserID FROM SessionLog WHERE Date=?", (date,))
         return self.cs.fetchall()
 
     #Returns the timesheet record of a peer adviser
     def get_dailytimesheet(self, date):
-        self.cs.execute("SELECT * FROM TimeSheet WHERE Date=?", (date,))
+        self.cs.execute("SELECT StudentNumber, TimeIn, TimeOut FROM TimeSheet WHERE Date=?", (date,))
         return self.cs.fetchall()
 
     #Returns a specific session identified by its log ID
@@ -191,6 +190,14 @@ class FileHandler:
         self.cs.execute("SELECT TimeIn, TimeOut FROM SessionLog WHERE LogID=?", (logid,))
         return self.cs.fetchone()
 
+    def get_emailadviser(self):
+        self.cs.execute("SELECT EmailAddress FROM PeerAdviser")
+        return self.cs.fetchall()
+    
+    def get_emailadvisee(self):
+        self.cs.execute("SELECT EmailAddress FROM Advisee")
+        return self.cs.fetchall()
+    
     #Updates the session log, can only be used by an admin.
     def update_sessionlog(self, logid, timein, timeout, subject, adviserid):
         with self.db:

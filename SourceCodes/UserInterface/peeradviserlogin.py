@@ -15,6 +15,11 @@ class Ui_PeerAdviser(object):
         
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        
+        icon = QtGui.QIcon("../Resources/logo.png")
+        MainWindow.setWindowIcon(icon)
+        MainWindow.setWindowTitle("TutorialOn")
         
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setGeometry(QtCore.QRect(150, 150, 621, 192))
@@ -104,7 +109,7 @@ class Ui_PeerAdviser(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "TutorialOn"))
         self.pushButton_advisee.setText(_translate("MainWindow", "Advisee"))
         self.label_name.setText(_translate("MainWindow", "Name:"))
         self.pushButton_peeradviser.setText(_translate("MainWindow", "Peer Adviser"))
@@ -184,8 +189,8 @@ class Ui_PeerAdviser(object):
     def smsg(self, message):
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle('TutorialOn')
-        #icon = QtGui.QIcon("TutorialOn.png")
-        #msg.setWindowIcon(icon)
+        icon = QtGui.QIcon("../Resources/logo.png")
+        msg.setWindowIcon(icon)
         msg.setText(message)
         msg.exec_()
         
