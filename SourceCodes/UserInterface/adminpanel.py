@@ -189,9 +189,12 @@ class Ui_AdminPanel(object):
         self.radioButton_vsl_searchByDate = QtWidgets.QRadioButton(self.vsl_panel)
         self.radioButton_vsl_searchByDate.setGeometry(QtCore.QRect(70, 40, 91, 17))
         self.radioButton_vsl_searchByDate.setObjectName("radioButton_vsl_searchByDate")
+        self.radioButton_vsl_searchByDate.toggled.connect(lambda: self.toggle_vsl_searchByDate())
+        self.radioButton_vsl_searchByDate.setChecked(True)
         self.radioButton_vsl_searchByStudentNumber = QtWidgets.QRadioButton(self.vsl_panel)
         self.radioButton_vsl_searchByStudentNumber.setGeometry(QtCore.QRect(70, 70, 171, 17))
         self.radioButton_vsl_searchByStudentNumber.setObjectName("radioButton_vsl_searchByStudentNumber")
+        self.radioButton_vsl_searchByStudentNumber.toggled.connect(lambda: self.toggle_vsl_searchByStudentNumber())
         self.lineEdit_vsl_studentnumber = QtWidgets.QLineEdit(self.vsl_panel)
         self.lineEdit_vsl_studentnumber.setEnabled(False)
         self.lineEdit_vsl_studentnumber.setGeometry(QtCore.QRect(230, 71, 109, 21))
@@ -200,6 +203,7 @@ class Ui_AdminPanel(object):
         self.pushButton_vsl_search.setEnabled(True)
         self.pushButton_vsl_search.setGeometry(QtCore.QRect(490, 40, 81, 51))
         self.pushButton_vsl_search.setObjectName("pushButton_vsl_search")
+        self.pushButton_vsl_search.clicked.connect(lambda: self.push_vsl_search())
         self.dateEdit_vsl = QtWidgets.QDateEdit(self.vsl_panel)
         self.dateEdit_vsl.setEnabled(True)
         self.dateEdit_vsl.setGeometry(QtCore.QRect(230, 41, 109, 22))
@@ -786,15 +790,34 @@ class Ui_AdminPanel(object):
             else:
                 self.vsi_clear()
                 self.smsg("Error: Student not found.")
-            
-    
     
     #View Session Log Panel Functions
         
     def push_vsl(self):
         self.hide_panels()
         self.vsl_panel.setVisible(True)
-        
+            
+    def toggle_vsl_searchByDate(self):
+        if self.radioButton_vsl_searchByDate.isChecked():
+            self.dateEdit_vsl.setEnabled(True)      
+        else:
+            self.dateEdit_vsl.setEnabled(False)
+    
+    def toggle_vsl_searchByStudentNumber(self):
+        if self.radioButton_vsl_searchByStudentNumber.isChecked():
+            self.lineEdit_vsl_studentnumber.setEnabled(True)
+        else:
+            self.lineEdit_vsl_studentnumber.setEnabled(False)        
+            
+    def push_vsl_search(self):
+        if self.radioButton_vsl_searchByDate.isChecked():
+            date = self.dateEdit_vsl.text().replace('/','-')
+            x, studentnumber, timein, timeout, subject, adviserid = self.admin.get_dailysessionlog(date)
+            for n in x:
+                
+        else:
+            pass
+            
     #View Timesheet Log Panel Functions
         
     def push_vts(self):

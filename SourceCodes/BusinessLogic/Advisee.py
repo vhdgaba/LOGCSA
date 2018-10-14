@@ -14,8 +14,8 @@ class Advisee(Student):
             subject = defaultsubjecttitle
         userfh.advisee_timein(self.studentnumber, subject, adviser)
 
-    def time_out(self):
-        userfh.advisee_timeout(self.studentnumber)
+    def time_out(self, evaluation):
+        userfh.advisee_timeout(self.studentnumber, evaluation)
 
 if __name__ == '__main__':
     pass

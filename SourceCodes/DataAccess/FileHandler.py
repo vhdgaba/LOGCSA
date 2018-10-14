@@ -143,10 +143,10 @@ class FileHandler:
             self.cs.execute("INSERT INTO SessionLog(StudentNumber, Subject, AdviserID, Date, TimeIn) VALUES(?,?,?,?,?)", (studentnumber, subject, adviserid, date, timein))
 
     #Logs the time of the end of an advisee's tutorial period
-    def advisee_timeout(self, studentnumber):
+    def advisee_timeout(self, studentnumber, evaluation):
         timeout = datetime.datetime.now().strftime("%H:%M")
         with self.db:
-            self.cs.execute("UPDATE SessionLog SET TimeOut=? WHERE StudentNumber=? AND TimeOut IS NULL", (timeout, studentnumber))
+            self.cs.execute("UPDATE SessionLog SET TimeOut=?, Evaluation=? WHERE StudentNumber=? AND TimeOut IS NULL", (timeout, evaluation, studentnumber))
 
     #Logs the time in of a peer adviser
     def peeradviser_timein(self, studentnumber):

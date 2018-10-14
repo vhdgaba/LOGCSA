@@ -46,7 +46,8 @@ class Ui_AdviseeDialog(object):
     def push_logout(self, Dialog):
         user_sn = self.listWidget.currentItem().text().split(' ')[0]
         if self.ses.logout_advisee(user_sn):
-            Advisee(*self.ses.get_advisee(user_sn)).time_out()
+            evaluation = 25
+            Advisee(*self.ses.get_advisee(user_sn)).time_out(evaluation)
             self.smsg('Logout success!')
             self.updatelist()
             Dialog.close()
