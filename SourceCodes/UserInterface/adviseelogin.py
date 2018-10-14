@@ -84,6 +84,7 @@ class Ui_Advisee(object):
         self.pushButton_advisee.setGeometry(QtCore.QRect(20, 90, 91, 23))
         self.pushButton_advisee.setObjectName("pushButton_advisee")
         self.pushButton_advisee.setAutoDefault(True)
+        self.pushButton_advisee.setDown(True)
         self.pushButton_peeradviser = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_peeradviser.setGeometry(QtCore.QRect(20, 120, 91, 23))
         self.pushButton_peeradviser.setObjectName("pushButton_peeradviser")
@@ -188,6 +189,7 @@ class Ui_Advisee(object):
         else:
             self.lineEdit_name.clear()
             self.lineEdit_program.clear()
+            self.smsg("Student number not found.")
         
     def input_changed(self):
         self.pushButton_login.setDisabled(True)

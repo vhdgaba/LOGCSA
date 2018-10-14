@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'adminlogin.ui'
-#
-# Created by: PyQt5 UI code generator 5.6
-#
-# WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from UserInterface import peeradviserlogin, adviseelogin
+from UserInterface.adminpanel import Ui_AdminPanel
+from BusinessLogic.Admin import Admin
 
 class Ui_Admin(object):
     def setupUi(self, MainWindow):
@@ -26,6 +21,7 @@ class Ui_Admin(object):
         self.pushButton_login = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_login.setGeometry(QtCore.QRect(340, 170, 75, 23))
         self.pushButton_login.setObjectName("pushButton_login")
+        self.pushButton_login.clicked.connect(lambda: self.push_login())
         self.pushButton_login.setAutoDefault(True)
         
         self.pushButton_advisee = QtWidgets.QPushButton(self.centralwidget)
@@ -42,6 +38,7 @@ class Ui_Admin(object):
         self.pushButton_administrator.setGeometry(QtCore.QRect(20, 150, 91, 23))
         self.pushButton_administrator.setObjectName("pushButton_administrator")
         self.pushButton_administrator.setAutoDefault(True)
+        self.pushButton_administrator.setDown(True)
 
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setGeometry(QtCore.QRect(120, 80, 20, 301))
@@ -89,6 +86,29 @@ class Ui_Admin(object):
         ui.connect_session(self.ses)
         ui.setupUi(MainWindow)
 
+    def push_login(self):
+        username = self.lineEdit_username.text()
+        password = self.lineEdit_password.text()
+        if self.ses.login_admin(username, password):
+            self.smsg('Login success!')
+            self.lineEdit_username.clear()
+            self.lineEdit_password.clear()
+            AdminPanel = QtWidgets.QDialog(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+            ui = Ui_AdminPanel()
+            ui.setupUi(AdminPanel)
+            ui.connect_session(self.ses)
+            AdminPanel.exec_()
+        else:
+            self.smsg(self.ses.errormsg)
+
+    def smsg(self, message):
+        msg = QtWidgets.QMessageBox()
+        msg.setWindowTitle('TutorialOn')
+        #icon = QtGui.QIcon("TutorialOn.png")
+        #msg.setWindowIcon(icon)
+        msg.setText(message)
+        msg.exec_()
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

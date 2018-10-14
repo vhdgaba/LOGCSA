@@ -1,3 +1,5 @@
+import sys
+sys.path.append("/..")
 from BusinessLogic.Session import Session
 from BusinessLogic.PeerAdviser import PeerAdviser
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -49,6 +51,7 @@ class Ui_PeerAdviser(object):
         self.pushButton_peeradviser.setGeometry(QtCore.QRect(20, 120, 91, 23))
         self.pushButton_peeradviser.setObjectName("pushButton_peeradviser")
         self.pushButton_peeradviser.setAutoDefault(True)
+        self.pushButton_peeradviser.setDown(True)
         self.pushButton_admin = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_admin.setGeometry(QtCore.QRect(20, 150, 91, 23))
         self.pushButton_admin.setObjectName("pushButton_admin")
@@ -124,6 +127,7 @@ class Ui_PeerAdviser(object):
             self.lineEdit_organization.setText(padv.organization)
             self.lineEdit_program.setText(padv.program)
         else:
+            self.smsg('Student number not found.')
             self.lineEdit_name.clear()
             self.lineEdit_program.clear()
             self.lineEdit_organization.clear()

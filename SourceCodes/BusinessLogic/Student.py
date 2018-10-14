@@ -1,8 +1,8 @@
 from BusinessLogic.User import User
 
 class Student(User):
-    def __init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber):
-        User.__init__(self, firstname, middlename, lastname)
+    def __init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber, emailaddress):
+        User.__init__(self, firstname, middlename, lastname, emailaddress)
         self.studentnumber = studentnumber
         self.program = program
         self.contactnumber = contactnumber

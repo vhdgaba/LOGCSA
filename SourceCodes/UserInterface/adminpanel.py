@@ -7,8 +7,11 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from BusinessLogic.Advisee import Advisee
+from BusinessLogic.PeerAdviser import PeerAdviser
+from BusinessLogic.Admin import Admin
 
-class Ui_Dialog(object):
+class Ui_AdminPanel(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(801, 550)
@@ -59,6 +62,7 @@ class Ui_Dialog(object):
         self.label_adminPanel.setGeometry(QtCore.QRect(10, 10, 101, 16))
         self.label_adminPanel.setAlignment(QtCore.Qt.AlignCenter)
         self.label_adminPanel.setObjectName("label_adminPanel")
+        
         self.vsi_panel = QtWidgets.QGroupBox(Dialog)
         self.vsi_panel.setGeometry(QtCore.QRect(140, 90, 651, 451))
         self.vsi_panel.setTitle("")
@@ -75,10 +79,13 @@ class Ui_Dialog(object):
         self.lineEdit_vsi_studentnumber = QtWidgets.QLineEdit(self.vsi_panel)
         self.lineEdit_vsi_studentnumber.setGeometry(QtCore.QRect(52, 70, 109, 21))
         self.lineEdit_vsi_studentnumber.setObjectName("lineEdit_vsi_studentnumber")
+        self.lineEdit_vsi_studentnumber.returnPressed.connect(lambda: self.push_vsi_search())
+        self.lineEdit_vsi_studentnumber.textChanged.connect(lambda: self.vsi_clear())
         self.pushButton_vsi_search = QtWidgets.QPushButton(self.vsi_panel)
         self.pushButton_vsi_search.setEnabled(True)
         self.pushButton_vsi_search.setGeometry(QtCore.QRect(160, 69, 51, 23))
         self.pushButton_vsi_search.setObjectName("pushButton_vsi_search")
+        self.pushButton_vsi_search.clicked.connect(lambda: self.push_vsi_search())
         self.groupBox_vsia = QtWidgets.QGroupBox(self.vsi_panel)
         self.groupBox_vsia.setEnabled(True)
         self.groupBox_vsia.setGeometry(QtCore.QRect(30, 120, 591, 131))
@@ -99,23 +106,23 @@ class Ui_Dialog(object):
         self.xx_5.setGeometry(QtCore.QRect(10, 60, 111, 16))
         self.xx_5.setObjectName("xx_5")
         self.label_vsia_name = QtWidgets.QLabel(self.groupBox_vsia)
-        self.label_vsia_name.setGeometry(QtCore.QRect(110, 20, 81, 16))
+        self.label_vsia_name.setGeometry(QtCore.QRect(110, 20, 200, 16))
         self.label_vsia_name.setText("")
         self.label_vsia_name.setObjectName("label_vsia_name")
         self.label_vsia_program = QtWidgets.QLabel(self.groupBox_vsia)
-        self.label_vsia_program.setGeometry(QtCore.QRect(110, 40, 81, 16))
+        self.label_vsia_program.setGeometry(QtCore.QRect(110, 40, 200, 16))
         self.label_vsia_program.setText("")
         self.label_vsia_program.setObjectName("label_vsia_program")
         self.label_vsia_contactnumber = QtWidgets.QLabel(self.groupBox_vsia)
-        self.label_vsia_contactnumber.setGeometry(QtCore.QRect(110, 60, 81, 16))
+        self.label_vsia_contactnumber.setGeometry(QtCore.QRect(110, 60, 200, 16))
         self.label_vsia_contactnumber.setText("")
         self.label_vsia_contactnumber.setObjectName("label_vsia_contactnumber")
         self.label_vsia_emailaddress = QtWidgets.QLabel(self.groupBox_vsia)
-        self.label_vsia_emailaddress.setGeometry(QtCore.QRect(110, 80, 81, 16))
+        self.label_vsia_emailaddress.setGeometry(QtCore.QRect(110, 80, 200, 16))
         self.label_vsia_emailaddress.setText("")
         self.label_vsia_emailaddress.setObjectName("label_vsia_emailaddress")
         self.label_vsia_homeaddress = QtWidgets.QLabel(self.groupBox_vsia)
-        self.label_vsia_homeaddress.setGeometry(QtCore.QRect(110, 100, 81, 16))
+        self.label_vsia_homeaddress.setGeometry(QtCore.QRect(110, 100, 200, 16))
         self.label_vsia_homeaddress.setText("")
         self.label_vsia_homeaddress.setObjectName("label_vsia_homeaddress")
         self.xx_3.raise_()
@@ -145,30 +152,30 @@ class Ui_Dialog(object):
         self.xx_10.setGeometry(QtCore.QRect(10, 60, 111, 16))
         self.xx_10.setObjectName("xx_10")
         self.label_vsip_name = QtWidgets.QLabel(self.groupBox_vsip)
-        self.label_vsip_name.setGeometry(QtCore.QRect(110, 20, 81, 16))
+        self.label_vsip_name.setGeometry(QtCore.QRect(110, 20, 200, 16))
         self.label_vsip_name.setText("")
         self.label_vsip_name.setObjectName("label_vsip_name")
         self.label_vsip_program = QtWidgets.QLabel(self.groupBox_vsip)
-        self.label_vsip_program.setGeometry(QtCore.QRect(110, 40, 81, 16))
+        self.label_vsip_program.setGeometry(QtCore.QRect(110, 40, 200, 16))
         self.label_vsip_program.setText("")
         self.label_vsip_program.setObjectName("label_vsip_program")
         self.label_vsip_contactnumber = QtWidgets.QLabel(self.groupBox_vsip)
-        self.label_vsip_contactnumber.setGeometry(QtCore.QRect(110, 60, 81, 16))
+        self.label_vsip_contactnumber.setGeometry(QtCore.QRect(110, 60, 200, 16))
         self.label_vsip_contactnumber.setText("")
         self.label_vsip_contactnumber.setObjectName("label_vsip_contactnumber")
         self.label_vsip_organization = QtWidgets.QLabel(self.groupBox_vsip)
-        self.label_vsip_organization.setGeometry(QtCore.QRect(110, 80, 81, 16))
+        self.label_vsip_organization.setGeometry(QtCore.QRect(110, 80, 200, 16))
         self.label_vsip_organization.setText("")
         self.label_vsip_organization.setObjectName("label_vsip_organization")
         self.xx_11 = QtWidgets.QLabel(self.groupBox_vsip)
         self.xx_11.setGeometry(QtCore.QRect(10, 100, 111, 16))
         self.xx_11.setObjectName("xx_11")
         self.label_vsip_advisingschedule_1 = QtWidgets.QLabel(self.groupBox_vsip)
-        self.label_vsip_advisingschedule_1.setGeometry(QtCore.QRect(110, 100, 81, 16))
+        self.label_vsip_advisingschedule_1.setGeometry(QtCore.QRect(110, 100, 200, 16))
         self.label_vsip_advisingschedule_1.setText("")
         self.label_vsip_advisingschedule_1.setObjectName("label_vsip_advisingschedule_1")
         self.label_vsip_advisingschedule_2 = QtWidgets.QLabel(self.groupBox_vsip)
-        self.label_vsip_advisingschedule_2.setGeometry(QtCore.QRect(110, 120, 81, 16))
+        self.label_vsip_advisingschedule_2.setGeometry(QtCore.QRect(110, 120, 200, 16))
         self.label_vsip_advisingschedule_2.setText("")
         self.label_vsip_advisingschedule_2.setObjectName("label_vsip_advisingschedule_2")
         self.pushButton_vsi_delete = QtWidgets.QPushButton(self.vsi_panel)
@@ -706,6 +713,10 @@ class Ui_Dialog(object):
         self.xx_41.setText(_translate("Dialog", "MM/YYYY:"))
         self.xx_42.setText(_translate("Dialog", "View evaluation for:"))
 
+    def connect_session(self, session):
+        self.ses = session
+        self.admin = self.ses.admin
+
     def hide_panels(self):
         self.vsi_panel.setVisible(False)
         self.vsl_panel.setVisible(False)
@@ -717,11 +728,26 @@ class Ui_Dialog(object):
         
     #View Student Information Panel Functions
     
+    def vsi_clear(self):
+        self.label_vsia_name.clear()
+        self.label_vsia_program.clear()
+        self.label_vsia_contactnumber.clear()
+        self.label_vsia_homeaddress.clear()
+        self.label_vsia_emailaddress.clear()
+        self.label_vsip_name.clear()
+        self.label_vsip_program.clear()
+        self.label_vsip_organization.clear()
+        self.label_vsip_contactnumber.clear()
+        self.label_vsip_advisingschedule_1.clear()
+        self.label_vsip_advisingschedule_2.clear()
+    
     def push_vsi(self):
         self.hide_panels()
         self.vsi_panel.setVisible(True)
         self.radioButton_vsi_advisee.setChecked(True)
         self.groupBox_vsip.setVisible(False)
+        self.lineEdit_vsi_studentnumber.clear()
+        self.vsi_clear()
         
     def toggle_vsia(self):
         if self.radioButton_vsi_advisee.isChecked():
@@ -735,6 +761,34 @@ class Ui_Dialog(object):
         else:
             self.groupBox_vsip.setVisible(False) 
         
+    def push_vsi_search(self):
+        studentnumber = self.lineEdit_vsi_studentnumber.text()
+        if self.radioButton_vsi_advisee.isChecked():
+            if self.ses.get_advisee(studentnumber) != None:
+                adv = Advisee(*self.ses.get_advisee(studentnumber))
+                self.label_vsia_name.setText(adv.get_fullname())
+                self.label_vsia_program.setText(adv.program)
+                self.label_vsia_contactnumber.setText(adv.contactnumber)
+                self.label_vsia_homeaddress.setText(adv.homeaddress)
+                self.label_vsia_emailaddress.setText(adv.emailaddress)
+            else:
+                self.vsi_clear()
+                self.smsg("Error: Student not found.")
+        else:
+            if self.ses.get_peeradviser(studentnumber) != None:
+                padv = PeerAdviser(*self.ses.get_peeradviser(studentnumber))
+                self.label_vsip_name.setText(padv.get_fullname())
+                self.label_vsip_program.setText(padv.program)
+                self.label_vsip_organization.setText(padv.program)
+                self.label_vsip_contactnumber.setText(padv.contactnumber)
+                self.label_vsip_advisingschedule_1.setText(padv.get_schedule()[0])
+                self.label_vsip_advisingschedule_2.setText(padv.get_schedule()[1])
+            else:
+                self.vsi_clear()
+                self.smsg("Error: Student not found.")
+            
+    
+    
     #View Session Log Panel Functions
         
     def push_vsl(self):
@@ -771,11 +825,25 @@ class Ui_Dialog(object):
         self.hide_panels()
         self.ve_panel.setVisible(True)
 
+
+
+    #############
+    
+    def smsg(self, message):
+        msg = QtWidgets.QMessageBox()
+        msg.setWindowTitle('TutorialOn')
+        #icon = QtGui.QIcon("TutorialOn.png")
+        #msg.setWindowIcon(icon)
+        msg.setText(message)
+        msg.exec_()
+        
+        
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
+    ui = Ui_AdminPanel()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())

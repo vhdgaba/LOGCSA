@@ -7,8 +7,8 @@ import datetime
 userfh = FileHandler('../Data/record.db')
 
 class Admin(User):
-    def __init__(self, adminid, firstname, middlename, lastname):
-        User.__init__(self, firstname, middlename, lastname)
+    def __init__(self, adminid, firstname, middlename, lastname, emailaddress):
+        User.__init__(self, firstname, middlename, lastname, emailaddress)
         self.adminid = adminid
         self.errormsg = 'No error'
 

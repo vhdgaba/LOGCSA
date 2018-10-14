@@ -6,9 +6,8 @@ defaultsubjecttitle = 'General Information'
 
 class Advisee(Student):
     def __init__(self,  studentnumber, firstname, middlename, lastname, program, contactnumber, homeaddress, emailaddress):
-        Student.__init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber)
+        Student.__init__(self, studentnumber, firstname, middlename, lastname, program, contactnumber, emailaddress)
         self.homeaddress = homeaddress
-        self.emailaddress = emailaddress
 
     def time_in(self, subject, adviser):
         if subject == '':

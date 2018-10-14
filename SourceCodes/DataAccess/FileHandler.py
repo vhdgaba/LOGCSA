@@ -7,12 +7,16 @@ class FileHandler:
     def __init__(self, database):
         self.db = sqlite3.connect(database)
         self.cs = self.db.cursor()
+        try:
+            self.create_database()
+        except:
+            pass
 
     def create_database(self):
-        self.cs.execute('CREATE TABLE Login(AccountID integer primary key, Password text)')
-        self.cs.execute('CREATE TABLE Admin(AdminID integer primary key, FirstName text, MiddleName text, LastName text)')
+        self.cs.execute('CREATE TABLE Login(AccountID text primary key, Password text)')
+        self.cs.execute('CREATE TABLE Admin(AdminID text primary key, FirstName text, MiddleName text, LastName text, EmailAddress Text)')
         self.cs.execute('CREATE TABLE Advisee(StudentNumber integer primary key, FirstName text, MiddleName text, LastName text, Program text, ContactNumber text, HomeAddress text, EmailAddress text)')
-        self.cs.execute('CREATE TABLE PeerAdviser(StudentNumber integer primary key, FirstName text, MiddleName text, LastName text, Program text, ContactNumber text, Organization text)')
+        self.cs.execute('CREATE TABLE PeerAdviser(StudentNumber integer primary key, FirstName text, MiddleName text, LastName text, Program text, ContactNumber text, Organization text, EmailAddress text)')
         self.cs.execute('CREATE TABLE SessionLog(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text, Subject text, AdviserID integer)')
         self.cs.execute('CREATE TABLE TimeSheet(LogID integer primary key autoincrement, StudentNumber integer, Date text, TimeIn text, TimeOut text)')
         self.cs.execute('CREATE TABLE Subject(Code text primary key, Title text, Field text)')
@@ -39,11 +43,11 @@ class FileHandler:
 
     def add_peeradviser(self, peeradviser):
         with self.db:
-            self.cs.execute("INSERT INTO PeerAdviser VALUES(?,?,?,?,?,?,?)", (peeradviser.studentnumber, peeradviser.firstname, peeradviser.middlename, peeradviser.lastname, peeradviser.program, peeradviser.contactnumber, peeradviser.organization))
+            self.cs.execute("INSERT INTO PeerAdviser VALUES(?,?,?,?,?,?,?,?)", (peeradviser.studentnumber, peeradviser.firstname, peeradviser.middlename, peeradviser.lastname, peeradviser.program, peeradviser.contactnumber, peeradviser.organization, peeradviser.emailaddress))
 
     def add_admin(self, admin):
         with self.db:
-            self.cs.execute("INSERT INTO Admin VALUES(?,?,?,?)", (admin.adminid, admin.firstname, admin.middlename, admin.lastname))
+            self.cs.execute("INSERT INTO Admin VALUES(?,?,?,?,?)", (admin.adminid, admin.firstname, admin.middlename, admin.lastname, admin.emailaddress))
 
     def add_schedule(self, studentnumber, dayone, timeone, daytwo, timetwo):
         with self.db:
@@ -76,16 +80,21 @@ class FileHandler:
 
     #Updates peer adviser details. Can only be accessed by an admin.
     def update_peeradviser(self, studentnumber, peeradviser, dayone, timeone, daytwo, timetwo):
+        accountid = str(peeradviser.studentnumber)
         with self.db:
-            self.cs.execute("UPDATE PeerAdviser SET StudentNumber=?, FirstName=?, MiddleName=?, LastName=?, Program=?, ContactNumber=?, Organization=? WHERE StudentNumber=?", (peeradviser.studentnumber, peeradviser.firstname, peeradviser.middlename, peeradviser.lastname, peeradviser.program, peeradviser.contactnumber, peeradviser.organization, studentnumber))
-            self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(peeradviser.studentnumber, studentnumber))
+            self.cs.execute("UPDATE PeerAdviser SET StudentNumber=?, FirstName=?, MiddleName=?, LastName=?, Program=?, ContactNumber=?, Organization=?, EmailAddress=? WHERE StudentNumber=?", (peeradviser.studentnumber, peeradviser.firstname, peeradviser.middlename, peeradviser.lastname, peeradviser.program, peeradviser.contactnumber, peeradviser.organization, peeradviser.emailaddress, studentnumber))
+            self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(accountid, studentnumber))
             self.cs.execute("UPDATE AdvisingSchedule SET StudentNumber=?, DayOne=?, TimeOne=?, DayTwo=?, TimeTwo=? WHERE StudentNumber=?", (peeradviser.studentnumber, dayone, timeone, daytwo, timetwo, studentnumber))
 
     #Updates admin details. Can only be accessed by fellow admins.
     def update_admin(self, adminid, admin):
         with self.db:
-            self.cs.execute("UPDATE Admin SET AdminID=?, FirstName=?, MiddleName=?, LastName=? WHERE AdminID=?", (admin.adminid, admin.firstname, admin.middlename, admin.lastname, adminid))
+            self.cs.execute("UPDATE Admin SET AdminID=?, FirstName=?, MiddleName=?, LastName=?, EmailAddress=? WHERE AdminID=?", (admin.adminid, admin.firstname, admin.middlename, admin.lastname, admin.emailaddress, adminid))
             self.cs.execute("UPDATE Login SET AccountID=? WHERE AccountID=?",(admin.adminid, adminid))
+
+    def get_schedule(self, studentnumber):
+        self.cs.execute("SELECT DayOne, TimeOne, DayTwo, TimeTwo from AdvisingSchedule WHERE StudentNumber=?",(studentnumber,))
+        return self.cs.fetchone()
 
     def get_subjects(self, field):
         self.cs.execute("SELECT Code FROM Subject WHERE Field=?",(field,))
@@ -112,14 +121,17 @@ class FileHandler:
 
     #Uses the account id to get the passsword
     def get_password(self, accountid):
+        accountid = str(accountid)
         self.cs.execute("SELECT Password FROM Login WHERE AccountID=?", (accountid,))
         return self.cs.fetchone()
 
     def change_password(self, accountid, password):
+        accountid = str(accountid)
         with self.db:
             self.cs.execute("UPDATE Login SET Password=? WHERE AccountID=?", (password, accountid))
 
     def delete_user(self, accountid):
+        accountid = str(accountid)
         with self.db:
             self.cs.execute("DELETE FROM Login WHERE AccountID=?", (accountid,))
 
@@ -191,6 +203,7 @@ class FileHandler:
 
     #Registers a user account
     def register_user(self, accountid, password):
+        accountid = str(accountid)
         password = self.hash_password(password)
         with self.db:
             self.cs.execute("INSERT INTO Login VALUES(?,?)", (accountid, password))
@@ -234,3 +247,4 @@ class FileHandler:
 
     def close(self):
         self.db.close()
+        

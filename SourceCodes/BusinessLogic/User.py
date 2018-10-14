@@ -4,10 +4,11 @@ userfh = FileHandler('../Data/record.db')
 defaultsubjecttitle = 'General Information'
 
 class User:
-    def __init__(self, firstname = '', middlename = '', lastname = ''):
+    def __init__(self, firstname = '', middlename = '', lastname = '', emailaddress = ''):
         self.firstname = firstname
         self.middlename = middlename
         self.lastname = lastname
+        self.emailaddress = emailaddress
 
     #Returns the full name of the user as a printable representation of the object
     def __str__(self):

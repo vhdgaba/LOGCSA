@@ -65,10 +65,7 @@ class Session:
     def login_admin(self, adminid, password):
         if fh.in_admin(adminid):
             truepassword, = fh.get_password(adminid)
-            if str(adminid)[:4] != '9999':
-                self.errormsg = 'Login Error: The login ID and password entered did not match any record.'
-                return False
-            elif self.check_password(truepassword, password):
+            if self.check_password(truepassword, password):
                 self.admin = Admin(*fh.get_admin(adminid))
                 self.errormsg = 'No error'
                 return True
